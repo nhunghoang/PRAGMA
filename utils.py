@@ -10,7 +10,7 @@ import json
 returns numpy array of (PCA'd) timeseries data
 400 regions x 171 PCs
 '''
-def load_timeseries_data(in_file):
+def load_reduced_data(in_file):
     return np.genfromtxt(in_file, delimiter='\t', autostrip=True)[:,:171]
 
 '''

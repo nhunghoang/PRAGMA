@@ -9,25 +9,44 @@ import json
 import hdf5storage
 import scipy.signal as ss
 
-# fatlas = '/home/bayrakrg/neurdy/d3/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'
-# satlas = '/home/bayrakrg/neurdy/d3/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'
+indices = [86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316,
+           318, 320, 375, 376, 381, 382, 388, 390, 391, 393, 394]
+
+# # LOAD THE CONN MATRIX AND
+# # connectivity matrices all
+# mat = hdf5storage.loadmat('/home/bayrakrg/neurdy/d3/conn/processed_yeo_id108828.mat')
+# conn = mat['Vp_clean'][0, 0]  #default is the 400 parcellation
+# del mat
+#
+# # normalize the fc conn data
+# conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.std(conn, axis=1))
+
+fatlas = '/home/bayrakrg/neurdy/d3/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'
+fun_atlas = nib.load(fatlas)
+
+satlas = '/home/bayrakrg/neurdy/d3/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'
+str_atlas = nib.load(satlas)
+
+# create a cluster mask
+
+# mask structural parcellations
+
+# get unique values
+
+# count number for each masked and structural parcellation
+
+# get percentage for each unique label if non-zero
+
+
+
+pass
+
 # img_4d = '/home/bayrakrg/neurdy/d3/rfMRI_REST1_LR_hp2000_clean.nii.gz'
 # dataset = datasets.fetch_atlas_schaefer_2018(n_rois=400, yeo_networks=17, resolution_mm=2)
 # atlas_filename = dataset.maps
 
-# LOAD THE CONN MATRIX AND
-# connectivity matrices all
-mat = hdf5storage.loadmat('/home/bayrakrg/neurdy/d3/conn/processed_yeo_id108828.mat')
-conn = mat['Vp_clean'][0, 0]  #default is the 400 parcellation
-del mat
-
-# normalize the fc conn data
-conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.std(conn, axis=1))
-
-
-
-with open('func.json', 'w') as fp:
-    json.dump(data, fp, indent=2, sort_keys=False)
+# with open('func.json', 'w') as fp:
+#     json.dump(data, fp, indent=2, sort_keys=False)
 
 # atlas = nib.load(atlas_filename)
 # aff = atlas.get_affine()

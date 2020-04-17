@@ -15,6 +15,7 @@ del mat
 # row-wise subtraction
 # requires some stupid transpose operation
 # plt.plot(np.transpose(conn_norm))
+conn = conn[0:5]
 conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.std(conn, axis=1))
 m = 20
 conn_norm_ds = np.transpose(ss.resample(np.transpose(conn_norm), m))
@@ -24,21 +25,18 @@ transformer = SymbolicAggregateApproximation(n_bins=8, strategy='uniform')
 # strategy='uniform': all bins in each sample have identical widths,
 # strategy='quantile': all bins in each sample have the same number of points,
 # strategy='normal': bin edges are quantiles from a standard normal distribution.
-data = {}
+data = []
+
+# make a letter dict
+letter_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+letter_dict = {}
+for i, l in enumerate(letter_list):
+    letter_dict[l] = i
 
 for i in range(conn_norm_ds.shape[0]):
-    data[i] = {}
     tmp_sax = transformer.transform(conn_norm_ds[i, :].reshape(1, -1))
     for j in range(tmp_sax.shape[1]):
-        data[i][j] = [tmp_sax[:, j][0], '{}'.format(j), conn_norm_ds[:, i][j]]
-        # data[i] = {'letter': list(tmp_sax[:, i]), 'id': [int(x) for x in list(np.array(range(0,tmp_sax.shape[0])))], 'density': list(X[:, i])}
-
-letter_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-letter2num = [0, 1, 2, 3, 4, 5, 6, 7]
-for i in range(len(data)):
-    for j in range(len(data[i])):
-        letter = data[i][j][0]
-
+        data.append({'time': '{}'.format(j), 'letter': letter_dict[tmp_sax[:, j][0]],  'value': np.round(conn_norm_ds[i, :][j], 3)})
 
 with open('func.json', 'w') as fp:
     json.dump(data, fp, indent=2, sort_keys=False)

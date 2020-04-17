@@ -18,14 +18,16 @@ conn = mat['Vp_clean'][0, 0]  #default is the 400 parcellation
 del mat
 
 # normalize the fc conn data
-conn_norm = (conn - np.mean(conn, axis=0)) / np.mean(conn, axis=0) #row-wise
+conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.std(conn, axis=1))
 
 indices = [86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316, 318,
            320, 375, 376, 381, 382, 388, 390, 391, 393, 394]
-cluster = np.zeros_like(conn_norm[0])
+cluster_summed = np.zeros_like(conn_norm[0])
+cluster = []
 for idx in indices:
-    cluster = np.add(cluster, conn_norm[idx])
-ROI = cluster/len(indices)
+    cluster_summed = np.add(cluster_summed, conn_norm[idx])
+    cluster.append(conn_norm[idx])
+ROI = cluster_summed/len(indices)
 
 # atlas = nib.load(atlas_filename)
 # aff = atlas.get_affine()

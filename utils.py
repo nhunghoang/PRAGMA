@@ -101,7 +101,7 @@ def sax(conn_norm, time_point):
             data.append({'time': '{}'.format(j), 'letter': letter_dict[tmp_sax[:, j][0]],
                          'value': np.round(conn_norm_ds[i, :][j], 3)})
 
-    return data
+    return data # data is in the format that the observable expecting
 
     # with open('func.json', 'w') as fp:
     #     json.dump(data, fp, indent=2, sort_keys=False)

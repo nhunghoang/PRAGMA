@@ -24,7 +24,6 @@ del mat
 # normalize by row
 conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.mean(conn, axis=1))
 
-# TODO
 # structural mapping data
 # Shaefer atlas
 f_atlas = '/home/bayrakrg/neurdy/d3/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'
@@ -61,12 +60,12 @@ def get_signals():
         new_clusters = apply_clustering(alg, reduced_ts, X_indices, k)
         data_obj = new_clusters
 
-    elif op == 'detail_panel':
+    elif op == 'SAX':
         X_indices = client_data['X_indices']
         sax_data = sax(conn_norm, X_indices, time_point=20)
-        struct_data = structural_mapping()
-        all_data = {'sax': sax_data, 'struct': struct_data}
-        data_obj = all_data
+        # struct_data = structural_mapping(fun_atlas, mask, masked, id_to_name, X_indices)
+        # all_data = {'sax': sax_data, 'struct': struct_data}
+        data_obj = sax_data
 
     # TODO
     # elif op == '...':

@@ -62,9 +62,6 @@ def apply_clustering(algorithm, X, indices, k):
     return children
     
 def sax(conn_norm, indices, time_point):
-    # given indices
-    # indices = [86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316,
-    #            318, 320, 375, 376, 381, 382, 388, 390, 391, 393, 394]
 
     cluster_summed = np.zeros_like(conn_norm[0])
     cluster = []
@@ -102,13 +99,12 @@ def sax(conn_norm, indices, time_point):
 
     return data  # data is in the format that the observable expecting
 
-def structural_mapping(fun_atlas, mask, struct_atlas, id_to_name, indices):
+def structural_mapping(fun_atlas, mask, masked, id_to_name, indices):
     # create a cluster mask
     for idx in indices:
         mask = mask + (fun_atlas == idx)
 
     # mask structural parcellations
-    masked = struct_atlas.copy()
     masked[mask == 0] = 0
 
     # get unique values

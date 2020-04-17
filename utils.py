@@ -62,24 +62,23 @@ def apply_clustering(algorithm, X, indices, k):
     return children
     
 def sax(time_point):
-    # LOAD THE CONN MATRIX AND
+    # LOAD AND NORM THE CONN MATRIX ONE TIME
     # connectivity matrices all
     mat = hdf5storage.loadmat('/home/bayrakrg/neurdy/d3/conn/processed_yeo_id108828.mat')
     conn = mat['Vp_clean'][0, 0]  # default is the 400 parcellation
     del mat
-
     # normalize the fc conn data
     conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.std(conn, axis=1))
 
+    # given indices
     indices = [86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316,
-               318,
-               320, 375, 376, 381, 382, 388, 390, 391, 393, 394]
+               318, 320, 375, 376, 381, 382, 388, 390, 391, 393, 394]
     cluster_summed = np.zeros_like(conn_norm[0])
     cluster = []
     for idx in indices:
         cluster_summed = np.add(cluster_summed, conn_norm[idx])
         cluster.append(conn_norm[idx])
-    ROI = cluster_summed / len(indices)
+    ROI = cluster_summed / len(indices)  # averaged within ROI
 
     conn_matrix = np.vstack(cluster)
     time_point = 20
@@ -92,6 +91,7 @@ def sax(time_point):
     # strategy='normal': bin edges are quantiles from a standard normal distribution.
     data = []
 
+    # MAKE ONE TIME
     # make a letter dict
     letter_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
     letter_dict = {}

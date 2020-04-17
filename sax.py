@@ -15,10 +15,10 @@ del mat
 # row-wise subtraction
 # requires some stupid transpose operation
 # plt.plot(np.transpose(conn_norm))
-conn = conn[0:5]
+# conn = conn[0:5]
 conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.std(conn, axis=1))
-m = 20
-conn_norm_ds = np.transpose(ss.resample(np.transpose(conn_norm), m))
+time_point = 20
+conn_norm_ds = np.transpose(ss.resample(np.transpose(conn_norm), time_point))
 
 transformer = SymbolicAggregateApproximation(n_bins=8, strategy='uniform')
 # https://pyts.readthedocs.io/en/stable/modules/approximation.html

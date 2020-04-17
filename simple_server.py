@@ -4,6 +4,8 @@ from flask import Flask
 from flask_cors import CORS
 
 from utils import *
+import hdf5storage
+import numpy as np
 
 # create Flask app
 app = Flask(__name__)
@@ -14,8 +16,12 @@ CORS(app)
 # PCA-reduced timeseries data (400 regions x 171 PCs)
 reduced_ts = load_reduced_data('reduced_SID173839.txt')
 
-# TODO
-# complete timeseries data 
+# full functional conn data
+mat = hdf5storage.loadmat('/home/bayrakrg/neurdy/d3/conn/processed_yeo_id108828.mat')
+conn = mat['Vp_clean'][0, 0]  #default is the 400 parcellation
+del mat
+# normalize by row
+conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.std(conn, axis=1))
 
 # TODO
 # structural coordinate mapping data

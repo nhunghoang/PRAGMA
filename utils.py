@@ -61,15 +61,7 @@ def apply_clustering(algorithm, X, indices, k):
         children['children'].append({ 'regions': regions })
     return children
     
-def sax(time_point):
-    # LOAD AND NORM THE CONN MATRIX ONE TIME
-    # connectivity matrices all
-    mat = hdf5storage.loadmat('/home/bayrakrg/neurdy/d3/conn/processed_yeo_id108828.mat')
-    conn = mat['Vp_clean'][0, 0]  # default is the 400 parcellation
-    del mat
-    # normalize the fc conn data
-    conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.std(conn, axis=1))
-
+def sax(conn_norm, time_point):
     # given indices
     indices = [86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316,
                318, 320, 375, 376, 381, 382, 388, 390, 391, 393, 394]

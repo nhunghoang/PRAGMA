@@ -61,10 +61,10 @@ def apply_clustering(algorithm, X, indices, k):
         children['children'].append({ 'regions': regions })
     return children
     
-def sax(conn_norm, time_point=20):
+def sax(conn_norm, indices, time_point=20):
     # given indices
-    indices = [86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316,
-               318, 320, 375, 376, 381, 382, 388, 390, 391, 393, 394]
+    # indices = [86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316,
+    #            318, 320, 375, 376, 381, 382, 388, 390, 391, 393, 394]
 
     cluster_summed = np.zeros_like(conn_norm[0])
     cluster = []

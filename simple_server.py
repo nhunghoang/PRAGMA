@@ -39,12 +39,11 @@ def get_signals():
         k = client_data['k']
         X_indices = client_data['X_indices']
         new_clusters = apply_clustering(alg, reduced_ts, X_indices, k)
-        sax_data = sax(conn_norm, X_indices, time_point)
         data_obj = new_clusters
 
     elif op == 'SAX':
         X_indices = client_data['X_indices']
-        sax_data = sax(conn_norm, X_indices, time_point)
+        sax_data = sax(conn_norm, X_indices, time_point=20)
         data_obj = sax_data
 
     # TODO

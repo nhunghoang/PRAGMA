@@ -21,21 +21,50 @@ indices = [86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 185, 191, 
 # # normalize the fc conn data
 # conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.std(conn, axis=1))
 
-fatlas = '/home/bayrakrg/neurdy/d3/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'
-fun_atlas = nib.load(fatlas)
-
-satlas = '/home/bayrakrg/neurdy/d3/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'
-str_atlas = nib.load(satlas)
+f_atlas = '/home/bayrakrg/neurdy/d3/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'
+fu_atlas = nib.load(f_atlas)
+fun_atlas = fu_atlas.get_fdata()
+mask = np.zeros(fu_atlas.shape)
 
 # create a cluster mask
+for idx in indices:
+    # print(np.sum(fun_atlas == idx))
+    # print(np.sum(mask))
+    mask = mask + (fun_atlas == idx)
+    # f, (ax0, ax1) = plt.subplots(1, 2)
+    # ax0.imshow(fun_atlas[:, :, 30] == idx)
+    # ax1.imshow(mask[:, :, 30])
+    # plt.show()
 
 # mask structural parcellations
+satlas = '/home/bayrakrg/neurdy/d3/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'
+str_atlas = nib.load(satlas)
+struct_atlas = str_atlas.get_fdata()
+masked = struct_atlas.copy()
+masked[mask == 0] = 0
+
+# # Display original and masked images side-by-side
+# f, (ax0, ax1) = plt.subplots(1, 2)
+# ax0.imshow(struct_atlas[:, :, 40])
+# ax1.imshow(masked[:, :, 40])
+# plt.show()
 
 # get unique values
+unique_labels = np.unique(masked)
 
+# load braincolor csv file
+
+
+data = []
 # count number for each masked and structural parcellation
-
 # get percentage for each unique label if non-zero
+
+for u in unique_labels:
+    total = np.sum(struct_atlas == u)
+    partial = np.sum(masked == u)
+    if partial != 0:
+        percent = partial*100/total
+    data.append({'unique_id': u, 'unique_name': name[u], 'percentage': percent})
 
 
 
@@ -63,6 +92,3 @@ pass
 # plotting.show()
 #
 # plotting.plot_glass_brain(atlas_filename, threshold=3)
-
-
-pass

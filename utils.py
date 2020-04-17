@@ -61,9 +61,8 @@ def apply_clustering(algorithm, X, indices, k):
         children['children'].append({ 'regions': regions })
     return children
     
-def sax(conn_norm, time_point):
+def sax(conn_norm, time_point=20):
     # given indices
-    time_point = 20
     indices = [86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316,
                318, 320, 375, 376, 381, 382, 388, 390, 391, 393, 394]
 
@@ -101,7 +100,7 @@ def sax(conn_norm, time_point):
             data.append({'time': '{}'.format(j), 'letter': letter_dict[tmp_sax[:, j][0]],
                          'value': np.round(conn_norm_ds[i, :][j], 3)})
 
-    return data # data is in the format that the observable expecting
+    return data  # data is in the format that the observable expecting
 
     # with open('func.json', 'w') as fp:
     #     json.dump(data, fp, indent=2, sort_keys=False)

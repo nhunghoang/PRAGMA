@@ -60,12 +60,13 @@ def get_signals():
         new_clusters = apply_clustering(alg, reduced_ts, X_indices, k)
         data_obj = new_clusters
 
-    elif op == 'SAX':
+    elif op == 'detail_panel':
         X_indices = client_data['X_indices']
         sax_data = sax(conn_norm, X_indices, time_point=20)
-        # struct_data = structural_mapping(fun_atlas, mask, masked, id_to_name, X_indices)
-        # all_data = {'sax': sax_data, 'struct': struct_data}
-        data_obj = sax_data
+        struct_data = structural_mapping(fun_atlas, mask, masked, id_to_name, X_indices)
+        func_conn_data = functional_conn()
+        all_data = {'sax': sax_data, 'struct': struct_data, 'conn': func_conn_data}
+        data_obj = all_data
 
     # TODO
     # elif op == '...':

@@ -21,7 +21,7 @@ mat = hdf5storage.loadmat('/home/bayrakrg/neurdy/d3/conn/processed_yeo_id108828.
 conn = mat['Vp_clean'][0, 0]  #default is the 400 parcellation
 del mat
 # normalize by row
-conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.std(conn, axis=1))
+conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.mean(conn, axis=1))
 
 # TODO
 # structural coordinate mapping data

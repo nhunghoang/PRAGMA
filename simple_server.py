@@ -6,6 +6,7 @@ from flask_cors import CORS
 from utils import *
 import hdf5storage
 import numpy as np
+import nibabel as nib
 
 # create Flask app
 app = Flask(__name__)
@@ -24,7 +25,26 @@ del mat
 conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.mean(conn, axis=1))
 
 # TODO
-# structural coordinate mapping data
+# structural mapping data
+# Shaefer atlas
+f_atlas = '/home/bayrakrg/neurdy/d3/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'
+fu_atlas = nib.load(f_atlas)
+fun_atlas = fu_atlas.get_fdata()
+mask = np.zeros(fu_atlas.shape)
+
+# SLANT atlas
+satlas = '/home/bayrakrg/neurdy/d3/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'
+str_atlas = nib.load(satlas)
+struct_atlas = str_atlas.get_fdata()
+masked = struct_atlas.copy()
+
+# SLANT labels
+filename = '/home/bayrakrg/neurdy/d3/working_dir/braincolor.csv'
+id_to_name = {}
+with open(filename, 'r') as f:
+    for line in f.readlines():
+        label, name = line.strip().split(',')
+        id_to_name[int(label)] = name
 
 ##############################
 
@@ -41,10 +61,12 @@ def get_signals():
         new_clusters = apply_clustering(alg, reduced_ts, X_indices, k)
         data_obj = new_clusters
 
-    elif op == 'SAX':
+    elif op == 'detail_panel':
         X_indices = client_data['X_indices']
         sax_data = sax(conn_norm, X_indices, time_point=20)
-        data_obj = sax_data
+        struct_data = structural_mapping()
+        all_data = {'sax': sax_data, 'struct': struct_data}
+        data_obj = all_data
 
     # TODO
     # elif op == '...':

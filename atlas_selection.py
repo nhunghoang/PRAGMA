@@ -53,20 +53,26 @@ masked[mask == 0] = 0
 unique_labels = np.unique(masked)
 
 # load braincolor csv file
-
+filename = '/home/bayrakrg/neurdy/d3/working_dir/braincolor.csv'
+id_to_name = {}
+with open(filename, 'r') as f:
+    for line in f.readlines():
+        label, name = line.strip().split(',')
+        id_to_name[int(label)] = name
 
 data = []
 # count number for each masked and structural parcellation
 # get percentage for each unique label if non-zero
 
 for u in unique_labels:
-    total = np.sum(struct_atlas == u)
-    partial = np.sum(masked == u)
-    if partial != 0:
-        percent = partial*100/total
-    data.append({'unique_id': u, 'unique_name': name[u], 'percentage': percent})
-
-
+    u = int(u)
+    if u != 0:
+        total = np.sum(struct_atlas == u)
+        partial = np.sum(masked == u)
+        if partial != 0:
+            percent = partial*100/total
+        if percent >= 40:
+            data.append({'unique_id': u, 'unique_name': id_to_name[u], 'percentage': np.round(percent, 2)})
 
 pass
 

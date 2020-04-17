@@ -102,5 +102,28 @@ def sax(conn_norm, indices, time_point):
 
     return data  # data is in the format that the observable expecting
 
-    # with open('func.json', 'w') as fp:
-    #     json.dump(data, fp, indent=2, sort_keys=False)
+def structural_mapping(fun_atlas, mask, struct_atlas, id_to_name, indices):
+    # create a cluster mask
+    for idx in indices:
+        mask = mask + (fun_atlas == idx)
+
+    # mask structural parcellations
+    masked = struct_atlas.copy()
+    masked[mask == 0] = 0
+
+    # get unique values
+    unique_labels = np.unique(masked)
+
+    data = []
+    # count number for each masked and structural parcellation
+    # get percentage for each unique label if non-zero
+    for u in unique_labels:
+        u = int(u)
+        if u != 0:
+            total = np.sum(struct_atlas == u)
+            partial = np.sum(masked == u)
+            if partial != 0:
+                percent = partial * 100 / total
+            if percent >= 40:
+                data.append({'unique_id': u, 'unique_name': id_to_name[u], 'percentage': np.round(percent, 2)})
+    return data

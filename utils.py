@@ -123,3 +123,5 @@ def structural_mapping(fun_atlas, mask, struct_atlas, masked, id_to_name, indice
             if percent >= 40:
                 data.append({'unique_id': u, 'unique_name': id_to_name[u], 'percentage': np.round(percent, 2)})
     return data
+
+

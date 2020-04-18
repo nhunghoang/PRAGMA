@@ -99,7 +99,7 @@ def sax(conn_norm, indices, time_point):
 
     return data  # data is in the format that the observable expecting
 
-def structural_mapping(fun_atlas, mask, masked, id_to_name, indices):
+def structural_mapping(fun_atlas, mask, struct_atlas, masked, id_to_name, indices):
     # create a cluster mask
     for idx in indices:
         mask = mask + (fun_atlas == idx)

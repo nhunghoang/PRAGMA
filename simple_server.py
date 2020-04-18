@@ -62,9 +62,10 @@ def get_signals():
 
     elif op == 'detail_panel':
         X_indices = client_data['X_indices']
+        tree_leaves = client_data['tree_leaves']
         sax_data = sax(conn_norm, X_indices, time_point=20)
         struct_data = structural_mapping(fun_atlas, mask, masked, id_to_name, X_indices)
-        func_conn_data = functional_conn()
+        func_conn_data = functional_conn(conn_norm, tree_leaves)
         all_data = {'sax': sax_data, 'struct': struct_data, 'conn': func_conn_data}
         data_obj = all_data
 

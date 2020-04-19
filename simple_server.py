@@ -33,6 +33,7 @@ def get_signals():
     op = client_data['operation']
 
     if op == 'cluster':
+        '''Here we manipulate the tree and update conn matrix.'''
         alg = client_data['alg']
         k = client_data['k']
         X_indices = client_data['X_indices']
@@ -43,6 +44,7 @@ def get_signals():
         data_obj = new_clusters
 
     elif op == 'detail_panel':
+        '''Here we calculate the selected node data.'''
         X_indices = client_data['X_indices']
         fam_leaves = client_data['family_leaves']  # this is a dictionary
         sax_data = sax(conn_norm, X_indices, time_point=20)

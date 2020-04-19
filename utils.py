@@ -96,6 +96,7 @@ def apply_clustering(algorithm, X, indices, k):
 
 
 def functional_conn(conn_norm, tree_leaves):
+    th = 0.5
     # average cluster members to get ROIs
     rois = []
     for l in range(len(tree_leaves)):
@@ -114,9 +115,10 @@ def functional_conn(conn_norm, tree_leaves):
     for i in range(l):
         for j in range(l):
             pearson.append(np.round((stat.pearsonr(rois[i], rois[j]))[0], 3))
-    data = np.reshape(pearson, [l, l])
-    return data
-
+    pearson_matrix = np.reshape(pearson, [l, l])
+    th_mask = pearson_matrix >= th
+    pearson_matrix[th_mask == 0] = 0
+    return pearson_matrix
 
 def sax(conn_norm, indices, time_point):
 

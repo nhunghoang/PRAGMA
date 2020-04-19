@@ -87,11 +87,11 @@ def apply_clustering(algorithm, X, indices, k):
     membership = model.labels_
 
     np_idx = np.array(indices)
-    children = {'children':[]}
+    children = []
     for i in range(k):
         regions = np_idx[np.where(membership==i)[0]]
         regions = list(map(int, regions))
-        children['children'].append({'regions': regions})
+        children.append({'regions': regions})
     return children
 
 

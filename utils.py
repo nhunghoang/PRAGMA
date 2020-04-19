@@ -96,6 +96,7 @@ def apply_clustering(algorithm, X, indices, k):
 
 
 def functional_conn(conn_norm, tree_leaves):
+    th = 0.5
     # average cluster members to get ROIs
     rois = []
     for l in range(len(tree_leaves)):
@@ -114,9 +115,11 @@ def functional_conn(conn_norm, tree_leaves):
     for i in range(l):
         for j in range(l):
             pearson.append(np.round((stat.pearsonr(rois[i], rois[j]))[0], 3))
-    data = np.reshape(pearson, [l, l])
-    return data
-
+    pearson_matrix = np.reshape(pearson, [l, l])
+    th_mask = pearson_matrix >= th
+    pearson_matrix[th_mask == 0] = 0
+    pearson_matrix = []
+    return pearson_matrix
 
 def sax(conn_norm, indices, time_point):
 
@@ -183,17 +186,30 @@ def structural_mapping(fun_atlas, mask, struct_atlas, masked, id_to_name, indice
     return data
 
 
-def homogeneity(conn_norm, dict):
+def homogeneity(conn_norm, indices, fam_leaves):
+    current = indices
+    parent = []
+    dict = {}
+    count = 0
+    for d in fam_leaves:
+        parent = parent + d['regions']
+        dict['parent'] = parent
+        dict['current'] = current
+        if current != d['regions']:
+            count += 1
+            dict['sibling{}'.format(count)] = d['regions']
+
     data = {}
     # loop for each key in the dictionary (the number of siblings is changing)
     for d in dict:
         roi_idx = dict[d]
         # calculate pearson correlation
-        pearson = []
+        # pearson = []
         l = len(roi_idx)
-        for i in range(l):
-            for j in range(l):
-                pearson.append(np.round((stat.pearsonr(conn_norm[roi_idx[i]], conn_norm[roi_idx[j]]))[0], 3))
+        # for i in range(l):
+        #     for j in range(l):
+                # pearson.append(np.round((stat.pearsonr(conn_norm[roi_idx[i]], conn_norm[roi_idx[j]]))[0], 3))
+        pearson = np.round(np.corrcoef(conn_norm[roi_idx]), 3)
         pearson_matrix = np.reshape(pearson, [l, l])
         lower = np.tril(pearson_matrix, k=-1)  # lower triangle (w/o diagonal k=-1)
         data[d] = np.round(np.mean(lower[np.tril_indices(l, k=-1)]), 3)

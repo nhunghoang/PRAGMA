@@ -10,14 +10,6 @@ del mat
 # normalize by row
 conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.mean(conn, axis=1))
 
-# labels
-csv_fname = '/home/bayrakrg/neurdy/d3/conn/labels400.csv'
-id_to_name = {}
-with open(csv_fname, 'r') as f:
-    for line in f.readlines():
-        label, name = line.strip().split(',')
-        id_to_name[int(label)] = name
-
 tree_leaves = [[86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316],
                [318, 320, 375], [376], [381, 382, 388, 390, 391, 393, 394]]
 
@@ -40,12 +32,31 @@ for i in range(l):
     for j in range(l):
         pearson.append(np.round((ss.pearsonr(rois[i], rois[j]))[0], 3))
 pearson_matrix = np.reshape(pearson, [l, l])
+th_mask = pearson_matrix >= 0.5
+pearson_matrix[th_mask == 0 ] = 0
+# data = {}
+# for p, i in enumerate(pearson_matrix):
+#     data[i] = [i, pearson_matrix[i]]
+
 
 # homogeneity
-dict = {'parent': [86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316, 318,
-          320, 375, 376, 381, 382, 388, 390, 391, 393, 394], 'current': [86, 108, 111, 114, 119, 160, 166, 169, 171, 172,
-          182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316, 376], 'sibling1': [318, 320, 375],
-          'sibling2': [381, 382, 388, 390, 391, 393, 394]}
+dict2 = [{'region': [86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316, 318,
+          320, 375, 376, 381, 382, 388, 390, 391, 393, 394]}, {'region': [86, 108, 111, 114, 119, 160, 166, 169, 171, 172,
+          182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316, 376]}, {'region': [318, 320, 375]},
+        {'region': [381, 382, 388, 390, 391, 393, 394]}]
+
+current = [318, 320, 375]
+parent = []
+dict = {}
+count = 0
+for d in dict2:
+    dict['current'] = current
+    parent = parent + d['region']
+    dict['parent'] = parent
+    if current != d['region']:
+        count += 1
+        dict['sibling{}'.format(count)] = d['region']
+
 
 
 

@@ -206,19 +206,15 @@ def homogeneity(conn_norm, indices, fam_leaves):
             count += 1
             dict['sibling{}'.format(count)] = d['regions']
 
-    data = {}
+    data = []
     # loop for each key in the dictionary (the number of siblings is changing)
     for d in dict:
         roi_idx = dict[d]
         # calculate pearson correlation
-        # pearson = []
         l = len(roi_idx)
-        # for i in range(l):
-        #     for j in range(l):
-                # pearson.append(np.round((stat.pearsonr(conn_norm[roi_idx[i]], conn_norm[roi_idx[j]]))[0], 3))
         pearson = np.round(np.corrcoef(conn_norm[roi_idx]), 3)
         pearson_matrix = np.reshape(pearson, [l, l])
         lower = np.tril(pearson_matrix, k=-1)  # lower triangle (w/o diagonal k=-1)
-        data[d] = np.round(np.mean(lower[np.tril_indices(l, k=-1)]), 3)
+        data.append({'name': d, 'value': np.round(np.mean(lower[np.tril_indices(l, k=-1)]), 3)})
     return data
 

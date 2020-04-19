@@ -23,7 +23,7 @@ mat_filename = '/home/bayrakrg/neurdy/d3/conn/processed_yeo_id108828.mat'  # Rub
 fatlas = '/home/bayrakrg/neurdy/d3/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas
 satlas = '/home/bayrakrg/neurdy/d3/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'  # SLANT atlas
 filename = '/home/bayrakrg/neurdy/d3/working_dir/braincolor.csv'  # SLANT labels
-conn_norm, mask, fun_atlas, masked, id_to_name = struct_map(mat_filename, fatlas, satlas, filename)
+conn_norm, mask, fun_atlas, masked, id_to_name = prep_data(mat_filename, fatlas, satlas, filename)
 ##############################
 
 @app.route('/grab_data', methods=['GET','POST'])

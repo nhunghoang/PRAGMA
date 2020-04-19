@@ -42,7 +42,7 @@ def init_tree_data(n_leaves, in_file, out_file):
         json.dump(root, f)
 
 
-def struct_map(mat_fname, f_atlas, satlas, filename):
+def prep_data(mat_fname, f_atlas, satlas, filename):
     # full functional conn data
     mat = hdf5storage.loadmat(mat_fname)
     conn = mat['Vp_clean'][0, 0]  # default is the 400 parcellation

@@ -42,10 +42,10 @@ conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.mean(
 # homogeneity
 dict2 = [{'region': [86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316, 318,
           320, 375, 376, 381, 382, 388, 390, 391, 393, 394]}, {'region': [86, 108, 111, 114, 119, 160, 166, 169, 171, 172,
-          182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316, 376]}, {'region': [318, 320, 375]},
-        {'region': [381, 382, 388, 390, 391, 393, 394]}]
+          182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316, 376]}, {'region': [318]},
+        {'region': [381, 382, 388, 390, 391, 393, 394, 320, 375]}]
 
-current = [318, 320, 375]
+current = [318]
 parent = []
 dict = {}
 count = 0
@@ -74,13 +74,13 @@ data = []
 for d in dict:
     roi_idx = dict[d]
     # calculate pearson correlation
-    pearson = []
     l = len(roi_idx)
-    for i in range(l):
-        for j in range(l):
-            pearson.append(np.round((ss.pearsonr(conn_norm[roi_idx[i]], conn_norm[roi_idx[j]]))[0], 3))
-    pearson_matrix = np.reshape(pearson, [l, l])
-    lower = np.tril(pearson_matrix, k=-1)  # lower triangle (w/o diagonal k=-1)
-    data.append({'name': d, 'value': np.round(np.mean(lower[np.tril_indices(l, k=-1)]), 3)})
+    if l > 1:
+        pearson = np.round(np.corrcoef(conn_norm[roi_idx]), 3)
+        pearson_matrix = np.reshape(pearson, [l, l])
+        lower = np.tril(pearson_matrix, k=-1)  # lower triangle (w/o diagonal k=-1)
+        data.append({'name': d, 'value': np.round(np.mean(lower[np.tril_indices(l, k=-1)]), 3)})
+    else:
+        data.append({'name': d, 'value': 1})
 
 pass

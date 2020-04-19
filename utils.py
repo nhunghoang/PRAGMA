@@ -212,10 +212,13 @@ def homogeneity(conn_norm, indices, fam_leaves):
         roi_idx = dict[d]
         # calculate pearson correlation
         l = len(roi_idx)
-        pearson = np.round(np.corrcoef(conn_norm[roi_idx]), 3)
-        pearson_matrix = np.reshape(pearson, [l, l])
-        lower = np.tril(pearson_matrix, k=-1)  # lower triangle (w/o diagonal k=-1)
-        data.append({'name': d, 'value': np.round(np.mean(lower[np.tril_indices(l, k=-1)]), 3)})
+        if l > 1:
+            pearson = np.round(np.corrcoef(conn_norm[roi_idx]), 3)
+            pearson_matrix = np.reshape(pearson, [l, l])
+            lower = np.tril(pearson_matrix, k=-1)  # lower triangle (w/o diagonal k=-1)
+            data.append({'name': d, 'value': np.round(np.mean(lower[np.tril_indices(l, k=-1)]), 3)})
+        else:
+            data.append({'name': d, 'value': 1})
 
     return data
 

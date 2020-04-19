@@ -8,6 +8,7 @@ import json
 import hdf5storage
 import matplotlib.pyplot as plt
 import scipy.signal as ss
+import scipy.stats as stat
 from pyts.approximation import SymbolicAggregateApproximation
 
 '''
@@ -58,9 +59,32 @@ def apply_clustering(algorithm, X, indices, k):
     for i in range(k):
         regions = np_idx[np.where(membership==i)[0]]
         regions = list(map(int, regions))
-        children['children'].append({ 'regions': regions })
+        children['children'].append({'regions': regions})
     return children
-    
+
+def functional_conn(conn_norm, tree_leaves):
+    # average cluster members to get ROIs
+    rois = []
+    for l in range(len(tree_leaves)):
+        cluster_summed = np.zeros_like(conn_norm[0])
+        cluster = []
+        # fetch the data
+        indices = tree_leaves[l]
+        for idx in indices:
+            cluster_summed = np.add(cluster_summed, conn_norm[idx])
+        ROI = cluster_summed / len(indices)  # averaged within ROI
+        rois.append(ROI)
+
+    # calculate pearson correlation
+    pearson = []
+    l = len(rois)
+    for i in range(l):
+        for j in range(l):
+            pearson.append(np.round((stat.pearsonr(rois[i], rois[j]))[0], 3))
+    data = np.reshape(pearson, [l, l])
+    return data
+
+
 def sax(conn_norm, indices, time_point):
 
     cluster_summed = np.zeros_like(conn_norm[0])
@@ -99,6 +123,7 @@ def sax(conn_norm, indices, time_point):
 
     return data  # data is in the format that the observable expecting
 
+
 def structural_mapping(fun_atlas, mask, struct_atlas, masked, id_to_name, indices):
     # create a cluster mask
     for idx in indices:
@@ -124,4 +149,20 @@ def structural_mapping(fun_atlas, mask, struct_atlas, masked, id_to_name, indice
                 data.append({'unique_id': u, 'unique_name': id_to_name[u], 'percentage': np.round(percent, 2)})
     return data
 
+
+def homogeneity(conn_norm, dict):
+    data = {}
+    # loop for each key in the dictionary (the number of siblings is changing)
+    for d in dict:
+        roi_idx = dict[d]
+        # calculate pearson correlation
+        pearson = []
+        l = len(roi_idx)
+        for i in range(l):
+            for j in range(l):
+                pearson.append(np.round((stat.pearsonr(conn_norm[roi_idx[i]], conn_norm[roi_idx[j]]))[0], 3))
+        pearson_matrix = np.reshape(pearson, [l, l])
+        lower = np.tril(pearson_matrix, k=-1)  # lower triangle (w/o diagonal k=-1)
+        data[d] = np.round(np.mean(lower[np.tril_indices(l, k=-1)]), 3)
+    return data
 

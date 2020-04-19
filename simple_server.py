@@ -57,20 +57,19 @@ def get_signals():
         alg = client_data['alg']
         k = client_data['k']
         X_indices = client_data['X_indices']
+        tree_leaves = client_data['tree_leaves']
         new_clusters = apply_clustering(alg, reduced_ts, X_indices, k)
+        func_conn_data = functional_conn(conn_norm, tree_leaves)
         data_obj = new_clusters
 
     elif op == 'detail_panel':
         X_indices = client_data['X_indices']
-        tree_leaves = client_data['tree_leaves']
+        tree_leaves = client_data['family_leaves']  # this is a dictionary
         sax_data = sax(conn_norm, X_indices, time_point=20)
         struct_data = structural_mapping(fun_atlas, mask, masked, id_to_name, X_indices)
-        func_conn_data = functional_conn(conn_norm, tree_leaves)
-        all_data = {'sax': sax_data, 'struct': struct_data, 'conn': func_conn_data}
+        homogeneity_data = homogeneity(conn_norm, family_leaves)
+        all_data = {'sax': sax_data, 'struct': struct_data, 'homogeneity': homogeneity_data}
         data_obj = all_data
-
-    # TODO
-    # elif op == '...':
 
     # this is returned to the client 
     # note, it will take data_obj, and convert it to a Javascript object

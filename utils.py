@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import scipy.signal as ss
 import scipy.stats as stat
 from pyts.approximation import SymbolicAggregateApproximation
+import nibabel as nib
 
 '''
 returns numpy array of (PCA'd) timeseries data
@@ -39,6 +40,37 @@ def init_tree_data(n_leaves, in_file, out_file):
     # write to json file 
     with open(out_file, 'w') as f:
         json.dump(root, f)
+
+
+def struct_map(mat_fname, f_atlas, satlas, filename):
+    # full functional conn data
+    mat = hdf5storage.loadmat(mat_fname)
+    conn = mat['Vp_clean'][0, 0]  # default is the 400 parcellation
+    del mat
+    # normalize by row
+    conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.mean(conn, axis=1))
+
+    # make mask for mapping
+    fu_atlas = nib.load(f_atlas)
+    fun_atlas = fu_atlas.get_fdata()
+    mask = np.zeros(fu_atlas.shape)
+
+    # load structural data
+    str_atlas = nib.load(satlas)
+    struct_atlas = str_atlas.get_fdata()
+    masked = struct_atlas.copy()
+
+    # id to name
+    id_to_name = {}
+    with open(filename, 'r') as f:
+        for line in f.readlines():
+            label, name = line.strip().split(',')
+            id_to_name[int(label)] = name
+
+    return conn_norm, mask, fun_atlas, masked, id_to_name
+
+
+
 
 '''
 return a children dictionary

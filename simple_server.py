@@ -17,34 +17,13 @@ CORS(app)
 # PCA-reduced timeseries data (400 regions x 171 PCs)
 reduced_ts = load_reduced_data('reduced_SID173839.txt')
 
-# full functional conn data
-mat = hdf5storage.loadmat('/home/bayrakrg/neurdy/d3/conn/processed_yeo_id108828.mat')
-conn = mat['Vp_clean'][0, 0]  #default is the 400 parcellation
-del mat
-# normalize by row
-conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.mean(conn, axis=1))
-
+# functional conn data
+mat_filename = '/home/bayrakrg/neurdy/d3/conn/processed_yeo_id108828.mat'  # Rubinov conn
 # structural mapping data
-# Shaefer atlas
-f_atlas = '/home/bayrakrg/neurdy/d3/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'
-fu_atlas = nib.load(f_atlas)
-fun_atlas = fu_atlas.get_fdata()
-mask = np.zeros(fu_atlas.shape)
-
-# SLANT atlas
-satlas = '/home/bayrakrg/neurdy/d3/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'
-str_atlas = nib.load(satlas)
-struct_atlas = str_atlas.get_fdata()
-masked = struct_atlas.copy()
-
-# SLANT labels
-filename = '/home/bayrakrg/neurdy/d3/working_dir/braincolor.csv'
-id_to_name = {}
-with open(filename, 'r') as f:
-    for line in f.readlines():
-        label, name = line.strip().split(',')
-        id_to_name[int(label)] = name
-
+fatlas = '/home/bayrakrg/neurdy/d3/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas
+satlas = '/home/bayrakrg/neurdy/d3/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'  # SLANT atlas
+filename = '/home/bayrakrg/neurdy/d3/working_dir/braincolor.csv'  # SLANT labels
+conn_norm, mask, fun_atlas, masked, id_to_name = struct_map(mat_filename, fatlas, satlas, filename)
 ##############################
 
 @app.route('/grab_data', methods=['GET','POST'])

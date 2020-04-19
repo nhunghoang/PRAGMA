@@ -55,8 +55,7 @@ def get_signals():
         fam_leaves = client_data['family_leaves']  # this is a dictionary
         sax_data = sax(conn_norm, X_indices, time_point=20)
         struct_data = structural_mapping(fun_atlas, mask, struct_atlas, masked, id_to_name, X_indices)
-        # homogeneity_data = homogeneity(conn_norm, fam_leaves)
-        homogeneity_data = {}
+        homogeneity_data = homogeneity(conn_norm, X_indices, fam_leaves)
         all_data = {'sax': sax_data, 'struct': struct_data, 'homogeneity': homogeneity_data}
         data_obj = all_data
 

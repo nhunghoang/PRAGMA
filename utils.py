@@ -185,7 +185,20 @@ def structural_mapping(fun_atlas, mask, struct_atlas, masked, id_to_name, indice
     return data
 
 
-def homogeneity(conn_norm, dict):
+def homogeneity(conn_norm, indices, fam_leaves):
+    current = indices
+    parent = []
+    dict = {}
+    count = 0
+    for d in fam_leaves:
+        parent = parent + d['region']
+        dict['parent'] = parent
+        dict['current'] = current
+        if current != d['region']:
+            count += 1
+            dict['sibling{}'.format(count)] = d['region']
+
+
     data = {}
     # loop for each key in the dictionary (the number of siblings is changing)
     for d in dict:

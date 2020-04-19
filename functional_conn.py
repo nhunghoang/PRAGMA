@@ -10,6 +10,14 @@ del mat
 # normalize by row
 conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.mean(conn, axis=1))
 
+# labels
+csv_fname = '/home/bayrakrg/neurdy/d3/conn/labels400.csv'
+id_to_name = {}
+with open(csv_fname, 'r') as f:
+    for line in f.readlines():
+        label, name = line.strip().split(',')
+        id_to_name[int(label)] = name
+
 tree_leaves = [[86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316],
                [318, 320, 375], [376], [381, 382, 388, 390, 391, 393, 394]]
 
@@ -38,6 +46,8 @@ dict = {'parent': [86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 18
           320, 375, 376, 381, 382, 388, 390, 391, 393, 394], 'current': [86, 108, 111, 114, 119, 160, 166, 169, 171, 172,
           182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316, 376], 'sibling1': [318, 320, 375],
           'sibling2': [381, 382, 388, 390, 391, 393, 394]}
+
+
 
 data = {}
 # loop for each key in the dictionary (the number of siblings is changing)

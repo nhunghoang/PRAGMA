@@ -191,12 +191,12 @@ def homogeneity(conn_norm, indices, fam_leaves):
     dict = {}
     count = 0
     for d in fam_leaves:
-        parent = parent + d['region']
+        parent = parent + d['regions']
         dict['parent'] = parent
         dict['current'] = current
-        if current != d['region']:
+        if current != d['regions']:
             count += 1
-            dict['sibling{}'.format(count)] = d['region']
+            dict['sibling{}'.format(count)] = d['regions']
 
 
     data = {}

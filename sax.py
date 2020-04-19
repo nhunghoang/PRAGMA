@@ -43,8 +43,11 @@ for i, l in enumerate(letter_list):
     letter_dict[l] = i
 
 data = []
-
-
+# hacky solution
+for letter in letter_dict:
+    for i in range(20):
+        data.append({'time': '{}'.format(i), 'letter': letter,
+                     'value': 0})
 # apply SAX
 for i in range(conn_norm_ds.shape[0]):  # ROI x time-point
     tmp_sax = transformer.transform(conn_norm_ds[i, :].reshape(1, -1))

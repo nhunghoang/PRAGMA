@@ -200,11 +200,11 @@ def homogeneity(conn_norm, indices, fam_leaves):
     count = 0
     for d in fam_leaves:
         parent = parent + d['regions']
-        dict['parent'] = parent
-        dict['current'] = current
         if current != d['regions']:
             count += 1
-            dict['sibling{}'.format(count)] = d['regions']
+            dict['Sibling{}'.format(count)] = d['regions']
+    dict['Current'] = current
+    dict['Parent'] = parent
 
     data = []
     # loop for each key in the dictionary (the number of siblings is changing)
@@ -216,5 +216,6 @@ def homogeneity(conn_norm, indices, fam_leaves):
         pearson_matrix = np.reshape(pearson, [l, l])
         lower = np.tril(pearson_matrix, k=-1)  # lower triangle (w/o diagonal k=-1)
         data.append({'name': d, 'value': np.round(np.mean(lower[np.tril_indices(l, k=-1)]), 3)})
+
     return data
 

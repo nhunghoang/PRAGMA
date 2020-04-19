@@ -42,18 +42,25 @@ letter_dict = {}
 for i, l in enumerate(letter_list):
     letter_dict[l] = i
 
-data = []
+data = {}
 # hacky solution
 for letter in letter_dict:
     for i in range(20):
-        data.append({'time': '{}'.format(i), 'letter': letter,
+        data['{}_{}'.format(i, letter_dict[letter])] = ({'time': '{}'.format(i), 'letter': letter_dict[letter],
                      'value': 0})
 # apply SAX
 for i in range(conn_norm_ds.shape[0]):  # ROI x time-point
     tmp_sax = transformer.transform(conn_norm_ds[i, :].reshape(1, -1))
     for j in range(tmp_sax.shape[1]):
-        data.append({'time': '{}'.format(j), 'letter': letter_dict[tmp_sax[:, j][0]],
-                     'value': np.round(conn_norm_ds[i, :][j], 3)})
+        # data['{}_{}'.format(j,letter_dict[0,j])]['value'] = data['{}_{}'.format(j,letter_dict[0,j])]['value'] +1
+        data['{}_{}'.format(j,letter_dict[tmp_sax[0,j]])]['value'] += 1
+        data = list(data.values())
+        pass
+
+
+        # if we wanted to assign values
+        # data.append({'time': '{}'.format(j), 'letter': letter_dict[tmp_sax[:, j][0]],
+        #              'value': np.round(conn_norm_ds[i, :][j], 3)})
 
 with open('func.json', 'w') as fp:
     json.dump(data, fp, indent=2, sort_keys=False)

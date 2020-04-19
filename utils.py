@@ -149,18 +149,20 @@ def sax(conn_norm, indices, time_point):
     for i, l in enumerate(letter_list):
         letter_dict[l] = i
 
-    data = []
-    # hacky solution
+    data = {}
+    # initialize the sax dictionary solution
     for letter in letter_dict:
         for i in range(20):
-            data.append({'time': '{}'.format(i), 'letter': letter,
-                         'value': 0})
+            data['{}_{}'.format(i, letter_dict[letter])] = ({'time': '{}'.format(i), 'letter': str(letter_dict[letter]),
+                                                             'value': 0})
     # apply SAX
     for i in range(conn_norm_ds.shape[0]):  # ROI x time-point
         tmp_sax = transformer.transform(conn_norm_ds[i, :].reshape(1, -1))
         for j in range(tmp_sax.shape[1]):
-            data.append({'time': '{}'.format(j), 'letter': letter_dict[tmp_sax[:, j][0]],
-                         'value': np.round(conn_norm_ds[i, :][j], 3) + 1})
+            # data['{}_{}'.format(j,letter_dict[0,j])]['value'] = data['{}_{}'.format(j,letter_dict[0,j])]['value'] +1
+            data['{}_{}'.format(j, letter_dict[tmp_sax[0, j]])]['value'] += 1
+
+    data = list(data.values())
 
     return data  # data is in the format that the observable expecting
 

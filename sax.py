@@ -43,15 +43,14 @@ for i, l in enumerate(letter_list):
     letter_dict[l] = i
 
 data = []
+
+
 # apply SAX
 for i in range(conn_norm_ds.shape[0]):  # ROI x time-point
     tmp_sax = transformer.transform(conn_norm_ds[i, :].reshape(1, -1))
     for j in range(tmp_sax.shape[1]):
         data.append({'time': '{}'.format(j), 'letter': letter_dict[tmp_sax[:, j][0]],
                      'value': np.round(conn_norm_ds[i, :][j], 3)})
-
-# with open('func.json', 'w') as fp:
-#     json.dump(data, fp, indent=2, sort_keys=False)
 
 with open('func.json', 'w') as fp:
     json.dump(data, fp, indent=2, sort_keys=False)

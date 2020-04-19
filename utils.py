@@ -118,6 +118,7 @@ def functional_conn(conn_norm, tree_leaves):
     pearson_matrix = np.reshape(pearson, [l, l])
     th_mask = pearson_matrix >= th
     pearson_matrix[th_mask == 0] = 0
+    pearson_matrix = []
     return pearson_matrix
 
 def sax(conn_norm, indices, time_point):

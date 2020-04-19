@@ -94,6 +94,7 @@ def apply_clustering(algorithm, X, indices, k):
         children['children'].append({'regions': regions})
     return children
 
+
 def functional_conn(conn_norm, tree_leaves):
     # average cluster members to get ROIs
     rois = []
@@ -125,9 +126,9 @@ def sax(conn_norm, indices, time_point):
     for idx in indices:
         cluster_summed = np.add(cluster_summed, conn_norm[idx])
         cluster.append(conn_norm[idx])
-    ROI = cluster_summed / len(indices)  # averaged within ROI
-
+    # ROI = cluster_summed / len(indices)  # averaged within ROI
     conn_matrix = np.vstack(cluster)
+
     # downsample
     conn_norm_ds = np.transpose(ss.resample(np.transpose(conn_matrix), time_point))
 

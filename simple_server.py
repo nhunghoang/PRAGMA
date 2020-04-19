@@ -32,16 +32,22 @@ def get_signals():
     client_data = flask.request.json
     op = client_data['operation']
 
-    if op == 'cluster':
-        '''Here we manipulate the tree and update conn matrix.'''
+    if op == 'cluster&fc':
+        '''Manipulate the tree and update functional connectivity matrix after expand.'''
         alg = client_data['alg']
         k = client_data['k']
         X_indices = client_data['X_indices']
         tree_leaves = client_data['tree_leaves']
         new_clusters = apply_clustering(alg, reduced_ts, X_indices, k)
-        func_conn_data = functional_conn(conn_norm, tree_leaves)
-        all_data = {'new_clusters': new_clusters, 'conn': func_conn_data}
-        data_obj = new_clusters
+        func_conn = functional_conn(conn_norm, tree_leaves)
+        all_data = {'new_clusters': new_clusters, 'conn': func_conn}
+        data_obj = all_data
+
+    elif op == 'fc':
+        '''Calculate the functional connectivity matrix after merge and collapse.'''
+        tree_leaves = client_data['tree_leaves']
+        func_conn = functional_conn(conn_norm, tree_leaves)
+        data_obj = func_conn
 
     elif op == 'detail_panel':
         '''Here we calculate the selected node data.'''

@@ -67,7 +67,7 @@ def prep_data(mat_fname, f_atlas, satlas, filename):
             label, name = line.strip().split(',')
             id_to_name[int(label)] = name
 
-    return conn_norm, mask, fun_atlas, masked, id_to_name
+    return conn_norm, mask, fun_atlas, struct_atlas, masked, id_to_name
 
 
 
@@ -93,6 +93,7 @@ def apply_clustering(algorithm, X, indices, k):
         regions = list(map(int, regions))
         children['children'].append({'regions': regions})
     return children
+
 
 def functional_conn(conn_norm, tree_leaves):
     # average cluster members to get ROIs
@@ -125,9 +126,9 @@ def sax(conn_norm, indices, time_point):
     for idx in indices:
         cluster_summed = np.add(cluster_summed, conn_norm[idx])
         cluster.append(conn_norm[idx])
-    ROI = cluster_summed / len(indices)  # averaged within ROI
-
+    # ROI = cluster_summed / len(indices)  # averaged within ROI
     conn_matrix = np.vstack(cluster)
+
     # downsample
     conn_norm_ds = np.transpose(ss.resample(np.transpose(conn_matrix), time_point))
 

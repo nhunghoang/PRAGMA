@@ -67,7 +67,7 @@ def prep_data(mat_fname, f_atlas, satlas, filename):
             label, name = line.strip().split(',')
             id_to_name[int(label)] = name
 
-    return conn_norm, mask, fun_atlas, masked, id_to_name
+    return conn_norm, mask, fun_atlas, struct_atlas, masked, id_to_name
 
 
 

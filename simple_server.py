@@ -18,12 +18,12 @@ CORS(app)
 reduced_ts = load_reduced_data('reduced_SID173839.txt')
 
 # functional conn data
-mat_filename = '/home/bayrakrg/neurdy/d3/conn/processed_yeo_id108828.mat'  # Rubinov conn
+mat_filename = '/home/bayrakrg/neurdy/d3/server_data/processed_yeo_id108828.mat'  # Rubinov conn
 # structural mapping data
-fatlas = '/home/bayrakrg/neurdy/d3/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas
-satlas = '/home/bayrakrg/neurdy/d3/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'  # SLANT atlas
-filename = '/home/bayrakrg/neurdy/d3/working_dir/braincolor.csv'  # SLANT labels
-conn_norm, mask, fun_atlas, masked, id_to_name = prep_data(mat_filename, fatlas, satlas, filename)
+fatlas = '/home/bayrakrg/neurdy/d3/server_data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas
+satlas = '/home/bayrakrg/neurdy/d3/server_data/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'  # SLANT atlas
+filename = '/home/bayrakrg/neurdy/d3/server_data/braincolor.csv'  # SLANT labels
+conn_norm, mask, fun_atlas, struct_atlas, masked, id_to_name = prep_data(mat_filename, fatlas, satlas, filename)
 ##############################
 
 @app.route('/grab_data', methods=['GET','POST'])
@@ -54,8 +54,9 @@ def get_signals():
         X_indices = client_data['X_indices']
         fam_leaves = client_data['family_leaves']  # this is a dictionary
         sax_data = sax(conn_norm, X_indices, time_point=20)
-        struct_data = structural_mapping(fun_atlas, mask, masked, id_to_name, X_indices)
-        homogeneity_data = homogeneity(conn_norm, fam_leaves)
+        struct_data = structural_mapping(fun_atlas, mask, struct_atlas, masked, id_to_name, X_indices)
+        # homogeneity_data = homogeneity(conn_norm, fam_leaves)
+        homogeneity_data = {}
         all_data = {'sax': sax_data, 'struct': struct_data, 'homogeneity': homogeneity_data}
         data_obj = all_data
 

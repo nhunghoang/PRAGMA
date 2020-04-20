@@ -9,8 +9,7 @@ import json
 import hdf5storage
 import scipy.signal as ss
 
-indices = [86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 185, 191, 194, 195, 196, 197, 198, 243, 316,
-           318, 320, 375, 376, 381, 382, 388, 390, 391, 393, 394]
+indices = [190]
 
 # # LOAD THE CONN MATRIX AND
 # # connectivity matrices all
@@ -21,7 +20,7 @@ indices = [86, 108, 111, 114, 119, 160, 166, 169, 171, 172, 182, 184, 185, 191, 
 # # normalize the fc conn data
 # conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.std(conn, axis=1))
 
-f_atlas = '/home/bayrakrg/neurdy/d3/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'
+f_atlas = '../data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'
 fu_atlas = nib.load(f_atlas)
 fun_atlas = fu_atlas.get_fdata()
 mask = np.zeros(fu_atlas.shape)
@@ -37,7 +36,7 @@ for idx in indices:
     # plt.show()
 
 # mask structural parcellations
-satlas = '/home/bayrakrg/neurdy/d3/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'
+satlas = '../data/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'
 str_atlas = nib.load(satlas)
 struct_atlas = str_atlas.get_fdata()
 masked = struct_atlas.copy()
@@ -53,7 +52,7 @@ masked[mask == 0] = 0
 unique_labels = np.unique(masked)
 
 # load braincolor csv file
-filename = '/home/bayrakrg/neurdy/d3/working_dir/braincolor.csv'
+filename = '../data/braincolor.csv'
 id_to_name = {}
 with open(filename, 'r') as f:
     for line in f.readlines():
@@ -71,7 +70,7 @@ for u in unique_labels:
         partial = np.sum(masked == u)
         if partial != 0:
             percent = partial*100/total
-        if percent >= 40:
+        if 80 >= percent >= 7:
             data.append({'unique_id': u, 'unique_name': id_to_name[u], 'percentage': np.round(percent, 2)})
 
 pass

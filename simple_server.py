@@ -23,7 +23,7 @@ mat_filename = '../data/processed_yeo_id108828.mat'  # Rubinov conn
 fatlas = '../data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas
 satlas = '../data/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'  # SLANT atlas
 filename = '../data/braincolor.csv'  # SLANT labels
-conn_norm, mask, fun_atlas, struct_atlas, masked, id_to_name = prep_data(mat_filename, fatlas, satlas, filename)
+conn_norm, fun_atlas, struct_atlas, id_to_name = prep_data(mat_filename, fatlas, satlas, filename)
 ##############################
 
 @app.route('/grab_data', methods=['GET','POST'])
@@ -54,7 +54,7 @@ def get_signals():
         X_indices = client_data['X_indices']
         fam_leaves = client_data['family_leaves']  # this is a dictionary
         sax_data = sax(conn_norm, X_indices, time_point=20)
-        struct_data = structural_mapping(fun_atlas, mask, struct_atlas, masked, id_to_name, X_indices)
+        struct_data = structural_mapping(fun_atlas, struct_atlas, id_to_name, X_indices)
         homogeneity_data = homogeneity(conn_norm, X_indices, fam_leaves)
         all_data = {'sax': sax_data, 'struct': struct_data, 'homogeneity': homogeneity_data}
         data_obj = all_data

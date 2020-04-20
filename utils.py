@@ -53,12 +53,10 @@ def prep_data(mat_fname, f_atlas, satlas, filename):
     # make mask for mapping
     fu_atlas = nib.load(f_atlas)
     fun_atlas = fu_atlas.get_fdata()
-    mask = np.zeros(fu_atlas.shape)
 
     # load structural data
     str_atlas = nib.load(satlas)
     struct_atlas = str_atlas.get_fdata()
-    masked = struct_atlas.copy()
 
     # id to name
     id_to_name = {}
@@ -67,7 +65,7 @@ def prep_data(mat_fname, f_atlas, satlas, filename):
             label, name = line.strip().split(',')
             id_to_name[int(label)] = name
 
-    return conn_norm, mask, fun_atlas, struct_atlas, masked, id_to_name
+    return conn_norm, fun_atlas, struct_atlas, id_to_name
 
 
 
@@ -175,16 +173,21 @@ def sax(conn_norm, indices, time_point):
     return data  # data is in the format that the observable expecting
 
 
-def structural_mapping(fun_atlas, mask, struct_atlas, masked, id_to_name, indices):
+def structural_mapping(fun_atlas, struct_atlas, id_to_name, indices):
     # create a cluster mask
+    mask = np.zeros(fun_atlas.shape)
+    print(indices)
     for idx in indices:
         mask = mask + (fun_atlas == idx)
 
     # mask structural parcellations
+    masked = struct_atlas.copy()
     masked[mask == 0] = 0
+    print("sum masked {}".format(np.sum(masked)))
 
     # get unique values
     unique_labels = np.unique(masked)
+    print("unique labels {}".format(unique_labels))
 
     data = []
     # count number for each masked and structural parcellation
@@ -196,8 +199,11 @@ def structural_mapping(fun_atlas, mask, struct_atlas, masked, id_to_name, indice
             partial = np.sum(masked == u)
             if partial != 0:
                 percent = partial * 100 / total
-            if percent >= 40:
+            if 80 >= percent >= 7:
                 data.append({'unique_id': u, 'unique_name': id_to_name[u], 'percentage': np.round(percent, 2)})
+            else:
+                print("idk")
+    print(data)
     return data
 
 

@@ -96,7 +96,7 @@ def apply_clustering(algorithm, X, indices, k):
 
 
 def functional_conn(conn_norm, tree_leaves):
-    th = 0.5
+    th = 0.7
     # average cluster members to get ROIs
     rois = []
     for l in range(len(tree_leaves)):
@@ -118,8 +118,16 @@ def functional_conn(conn_norm, tree_leaves):
     pearson_matrix = np.reshape(pearson, [l, l])
     th_mask = pearson_matrix >= th
     pearson_matrix[th_mask == 0] = 0
-    pearson_matrix = []
-    return pearson_matrix
+    diag_mask = pearson_matrix == 1
+    pearson_matrix[diag_mask == 1] = 0
+
+    # add a unique id for mapping
+    data = []
+    unique_id = ["%02d" % x for x in range(l)]
+    for i, p in enumerate(pearson_matrix):
+        data.append({'id': '{}'.format(unique_id[i]), 'value': list(p)})
+
+    return data
 
 def sax(conn_norm, indices, time_point):
 

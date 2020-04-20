@@ -118,8 +118,14 @@ def functional_conn(conn_norm, tree_leaves):
     pearson_matrix = np.reshape(pearson, [l, l])
     th_mask = pearson_matrix >= th
     pearson_matrix[th_mask == 0] = 0
-    pearson_matrix = []
-    return pearson_matrix
+
+    # add a unique id for mapping
+    data = []
+    unique_id = ["%02d" % x for x in range(l)]
+    for i, p in enumerate(pearson_matrix):
+        data.append({'{}'.format(unique_id[i]): list(p)})
+
+    return data
 
 def sax(conn_norm, indices, time_point):
 

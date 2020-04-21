@@ -23,7 +23,7 @@ mat_filename = os.getcwd() + '/../data/processed_yeo_id108828.mat'  # Rubinov co
 fatlas = os.getcwd() + '/../data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas
 satlas = os.getcwd() + '/../data/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'  # SLANT atlas
 filename = os.getcwd() + '/../data/braincolor.csv'  # SLANT labels
-conn_norm, mask, fun_atlas, struct_atlas, masked, id_to_name = prep_data(mat_filename, fatlas, satlas, filename)
+conn_norm, fun_atlas, struct_atlas, id_to_name = prep_data(mat_filename, fatlas, satlas, filename)
 
 ##############################
 

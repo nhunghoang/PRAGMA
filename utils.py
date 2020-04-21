@@ -82,7 +82,7 @@ def prep_data(mat_fname, f_atlas, satlas, filename):
 return a children dictionary
 children['children'] = list of {'regions': regions}, which each represents a new child
 '''
-def apply_clustering(algorithm, X, indices, k):
+def apply_clustering(algorithm, X, indices, k, parent_id):
     if algorithm == 'KM':
         model = KMeans(n_clusters=k)
     else: # algorithm == 'AC'
@@ -97,7 +97,7 @@ def apply_clustering(algorithm, X, indices, k):
     for i in range(k):
         regions = np_idx[np.where(membership==i)[0]]
         regions = list(map(int, regions))
-        children.append({'regions': regions})
+        children.append({'regions': regions, 'id': parent_id+str(i)})
     return children
 
 

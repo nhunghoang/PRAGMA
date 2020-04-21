@@ -39,7 +39,8 @@ def get_signals():
         k = client_data['k']
         X_indices = client_data['X_indices']
         tree_leaves = client_data['tree_leaves']
-        new_clusters = apply_clustering(alg, reduced_ts, X_indices, k)
+        parent_id = client_data['parent_id']
+        new_clusters = apply_clustering(alg, reduced_ts, X_indices, k, parent_id)
         new_tree_leaves = insert_cluster(tree_leaves, new_clusters)
         func_conn = functional_conn(conn_norm, new_tree_leaves)
         all_data = {'new_clusters': new_clusters, 'func_conn': func_conn}

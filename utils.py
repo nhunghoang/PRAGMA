@@ -93,6 +93,20 @@ def apply_clustering(algorithm, X, indices, k):
     return children
 
 
+def insert_cluster(tree_leaves, new_clusters):
+    '''Remove the parent cluster add its children as new clusters.'''
+    one = []
+    for n in new_clusters:
+        one += list(n['regions'])
+
+    new_tree_leaves = tree_leaves.copy()
+    new_tree_leaves.remove(sorted(one))
+    for n in new_clusters:
+        new_tree_leaves.append(list(n['regions']))
+
+    return new_tree_leaves
+
+
 def functional_conn(conn_norm, tree_leaves):
     th = 0.7
     # average cluster members to get ROIs
@@ -176,18 +190,15 @@ def sax(conn_norm, indices, time_point):
 def structural_mapping(fun_atlas, struct_atlas, id_to_name, indices):
     # create a cluster mask
     mask = np.zeros(fun_atlas.shape)
-    print(indices)
     for idx in indices:
         mask = mask + (fun_atlas == idx)
 
     # mask structural parcellations
     masked = struct_atlas.copy()
     masked[mask == 0] = 0
-    print("sum masked {}".format(np.sum(masked)))
 
     # get unique values
     unique_labels = np.unique(masked)
-    print("unique labels {}".format(unique_labels))
 
     data = []
     # count number for each masked and structural parcellation
@@ -201,9 +212,6 @@ def structural_mapping(fun_atlas, struct_atlas, id_to_name, indices):
                 percent = partial * 100 / total
             if 80 >= percent >= 7:
                 data.append({'unique_id': u, 'unique_name': id_to_name[u], 'percentage': np.round(percent, 2)})
-            else:
-                print("idk")
-    print(data)
     return data
 
 

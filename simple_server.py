@@ -15,15 +15,16 @@ CORS(app)
 ############ DATA ############
 
 # PCA-reduced timeseries data (400 regions x 171 PCs)
-reduced_ts = load_reduced_data(os.getcwd() + '/reduced_SID173839.txt')
+reduced_ts = load_reduced_data(os.getcwd() + '/../data/reduced_SID173839.txt')
 
 # functional conn data
-mat_filename = '../data/processed_yeo_id108828.mat'  # Rubinov conn
+mat_filename = os.getcwd() + '/../data/processed_yeo_id108828.mat'  # Rubinov conn
 # structural mapping data
-fatlas = '../data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas
-satlas = '../data/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'  # SLANT atlas
-filename = '../data/braincolor.csv'  # SLANT labels
+fatlas = os.getcwd() + '/../data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas
+satlas = os.getcwd() + '/../data/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'  # SLANT atlas
+filename = os.getcwd() + '/../data/braincolor.csv'  # SLANT labels
 conn_norm, fun_atlas, struct_atlas, id_to_name = prep_data(mat_filename, fatlas, satlas, filename)
+
 ##############################
 
 @app.route('/grab_data', methods=['GET','POST'])

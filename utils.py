@@ -61,12 +61,10 @@ def prep_data(mat_fname, f_atlas, satlas, filename):
     # make mask for mapping
     fu_atlas = nib.load(f_atlas)
     fun_atlas = fu_atlas.get_fdata()
-    mask = np.zeros(fu_atlas.shape)
 
     # load structural data
     str_atlas = nib.load(satlas)
     struct_atlas = str_atlas.get_fdata()
-    masked = struct_atlas.copy()
 
     # id to name
     id_to_name = {}
@@ -75,7 +73,7 @@ def prep_data(mat_fname, f_atlas, satlas, filename):
             label, name = line.strip().split(',')
             id_to_name[int(label)] = name
 
-    return conn_norm, mask, fun_atlas, struct_atlas, masked, id_to_name
+    return conn_norm, fun_atlas, struct_atlas, id_to_name
 
 
 
@@ -101,6 +99,20 @@ def apply_clustering(algorithm, X, indices, k):
         regions = list(map(int, regions))
         children.append({'regions': regions})
     return children
+
+
+def insert_cluster(tree_leaves, new_clusters):
+    '''Remove the parent cluster add its children as new clusters.'''
+    one = []
+    for n in new_clusters:
+        one += list(n['regions'])
+
+    new_tree_leaves = tree_leaves.copy()
+    new_tree_leaves.remove(sorted(one))
+    for n in new_clusters:
+        new_tree_leaves.append(list(n['regions']))
+
+    return new_tree_leaves
 
 
 def functional_conn(conn_norm, tree_leaves):
@@ -183,12 +195,14 @@ def sax(conn_norm, indices, time_point):
     return data  # data is in the format that the observable expecting
 
 
-def structural_mapping(fun_atlas, mask, struct_atlas, masked, id_to_name, indices):
+def structural_mapping(fun_atlas, struct_atlas, id_to_name, indices):
     # create a cluster mask
+    mask = np.zeros(fun_atlas.shape)
     for idx in indices:
         mask = mask + (fun_atlas == idx)
 
     # mask structural parcellations
+    masked = struct_atlas.copy()
     masked[mask == 0] = 0
 
     # get unique values
@@ -204,7 +218,7 @@ def structural_mapping(fun_atlas, mask, struct_atlas, masked, id_to_name, indice
             partial = np.sum(masked == u)
             if partial != 0:
                 percent = partial * 100 / total
-            if percent >= 40:
+            if 80 >= percent >= 7:
                 data.append({'unique_id': u, 'unique_name': id_to_name[u], 'percentage': np.round(percent, 2)})
     return data
 

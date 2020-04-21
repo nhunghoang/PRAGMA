@@ -26,10 +26,19 @@ out_file: json file containing timeseries hierarchically grouped into clusters
 '''
 def init_tree_data(n_leaves, in_file, out_file):
     # read in data, apply k-means
-    data = load_timeseries_data(in_file)
+    data = load_reduced_data(in_file)
     model = KMeans(n_clusters=n_leaves) 
     model.fit(data)
     membership = model.labels_
+    c, counts = np.unique(membership, return_counts=True)
+
+    while np.isin(1, counts):
+        print("redo kmeans")
+        model = KMeans(n_clusters=n_leaves) 
+        model.fit(data)
+        membership = model.labels_
+        c, counts = np.unique(membership, return_counts=True)
+    print(counts)
 
     # form hierarchical structure
     root = { 'regions': list(range(400)), 'children': [] }
@@ -40,7 +49,6 @@ def init_tree_data(n_leaves, in_file, out_file):
     # write to json file 
     with open(out_file, 'w') as f:
         json.dump(root, f)
-
 
 def prep_data(mat_fname, f_atlas, satlas, filename):
     # full functional conn data
@@ -80,7 +88,7 @@ def apply_clustering(algorithm, X, indices, k):
     if algorithm == 'KM':
         model = KMeans(n_clusters=k)
     else: # algorithm == 'AC'
-        model = AgglomerativeClustering(n_clusters=k)
+        model = AgglomerativeClustering(n_clusters=k, linkage='average', affinity='cosine')
 
     X_subset = X[indices]
     model.fit(X_subset)

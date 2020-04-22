@@ -66,7 +66,7 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     plt.figure()
     plt.imshow(X)
     plt.show()
-    return json.dumps(X.tolist()) % jsonify
+    return json.dumps(X.tolist())  # jsonify
 
 
 fatlas = '../data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas

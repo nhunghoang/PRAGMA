@@ -4,6 +4,7 @@ from nilearn import plotting
 from PIL import Image
 import nibabel as nib
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
+import json
 
 def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     fig, axs = plt.subplots(1,3,figsize=(20, 4))
@@ -48,7 +49,6 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     axs[2].text(2, 105, 'z={}'.format(z), fontsize=12, color=text_color)
     plt.subplots_adjust(wspace=None, hspace=None)
 
-
     fig.canvas.draw()
     X = np.array(fig.canvas.renderer.buffer_rgba())
     # X = X[60:445,188:1350]
@@ -66,15 +66,13 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     plt.figure()
     plt.imshow(X)
     plt.show()
-    return X
+    return json.dumps(X.tolist()) % jsonify
+
 
 fatlas = '../data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas
 mni_path = '/home/bayrakrg//neurdy/d3/server_data/mni_masked.nii.gz'
-# fig = plotting.plot_roi(fatlas, cut_coords=(8, -4, 9), black_bg=True, cmap='tab10')
-# X = np.array(fig.canvas.renderer.buffer_rgba()).copy()
-# figure = plt.savefig(fig, dpi=300)
-# im = Image.open('test.png')
+fig = plotting.plot_roi(fatlas, cut_coords=(8, -4, 9), black_bg=True, cmap='tab10')
 
 vol = nib.load(fatlas).get_fdata()
 mni = nib.load(mni_path).get_fdata()
-tri_planar_plot(vol, mni, 45, 54, 45)
+tri_planar_plot(vol, mni, 44, 37, 45)

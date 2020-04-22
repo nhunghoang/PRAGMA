@@ -225,30 +225,36 @@ def structural_mapping(fun_atlas, struct_atlas, id_to_name, indices):
 
 def homogeneity(conn_norm, indices, fam_leaves):
     current = indices
+    current_id = ""
     parent = []
-    dict = {}
+    parent_id = fam_leaves[0]['id'] # can be solved using children IDs
+    dict1 = {}
     count = 0
     for d in fam_leaves:
         parent = parent + d['regions']
+        if len(d['id']) < len(parent_id): parent_id = d['id']
         if current != d['regions']:
             count += 1
-            dict['Sibling{}'.format(count)] = d['regions']
-    dict['Current'] = current
-    dict['Parent'] = parent
+            dict1['Sibling{}'.format(count)] = {'regions': d['regions'], 'id': d['id']}
+        else:
+            current_id = d['id']
+    dict1['Current'] = {'regions': current, 'id': current_id}
+    if len(fam_leaves) > 1:
+        dict1['Parent'] = {'regions': parent, 'id': parent_id[:-1]}
 
     data = []
     # loop for each key in the dictionary (the number of siblings is changing)
-    for d in dict:
-        roi_idx = dict[d]
+    for d in dict1:
+        roi_idx = dict1[d]['regions']
         # calculate pearson correlation
         l = len(roi_idx)
         if l > 1:
             pearson = np.round(np.corrcoef(conn_norm[roi_idx]), 3)
             pearson_matrix = np.reshape(pearson, [l, l])
             lower = np.tril(pearson_matrix, k=-1)  # lower triangle (w/o diagonal k=-1)
-            data.append({'name': d, 'value': np.round(np.mean(lower[np.tril_indices(l, k=-1)]), 3)})
+            data.append({'name': d, 'id': dict1[d]['id'], 'value': np.round(np.mean(lower[np.tril_indices(l, k=-1)]), 3)})
         else:
-            data.append({'name': d, 'value': 1})
+            data.append({'name': d, 'id': dict1[d]['id'], 'value': 1})
 
     return data
 

@@ -1,7 +1,5 @@
 import hdf5storage
 import numpy as np
-import scipy.stats as stat
-
 
 # full functional conn data
 mat = hdf5storage.loadmat('/home/bayrakrg/neurdy/d3/conn/processed_yeo_id108828.mat')

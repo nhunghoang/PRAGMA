@@ -39,6 +39,7 @@ def get_signals():
         k = client_data['k']
         X_indices = client_data['X_indices']
         tree_leaves = client_data['tree_leaves']
+        print(tree_leaves)
         parent_id = client_data['parent_id']
         new_clusters = apply_clustering(alg, reduced_ts, X_indices, k, parent_id)
         new_tree_leaves = insert_cluster(tree_leaves, new_clusters)
@@ -61,6 +62,13 @@ def get_signals():
         homogeneity_data = homogeneity(conn_norm, X_indices, fam_leaves)
         all_data = {'sax': sax_data, 'struct': struct_data, 'homogeneity': homogeneity_data}
         data_obj = all_data
+
+    elif op == 'nii':
+        '''Save the output image as nifti.'''
+        tree_leaves = client_data['tree_leaves']
+
+
+
 
     # this is returned to the client 
     # note, it will take data_obj, and convert it to a Javascript object

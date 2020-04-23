@@ -1,6 +1,5 @@
 import hdf5storage
 import numpy as np
-import scipy.stats as stat
 
 # full functional conn data
 mat = hdf5storage.loadmat('/home/bayrakrg/neurdy/d3/conn/processed_yeo_id108828.mat')
@@ -51,6 +50,6 @@ for d in dict:
         lower = np.tril(pearson_matrix, k=-1)  # lower triangle (w/o diagonal k=-1)
         data.append({'name': d, 'value': np.round(np.mean(lower[np.tril_indices(l, k=-1)]), 3)})
     else:
-        data.append({'name': d, 'value': 1})
+        data.append({'name': d, 'value': 1})  # if 
 
 pass

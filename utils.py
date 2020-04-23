@@ -258,3 +258,20 @@ def homogeneity(conn_norm, indices, fam_leaves):
 
     return data
 
+def tree2nii(atlas, path, tree_leaves):
+    img = nib.load(atlas)
+    fun_atlas = img.get_fdata()
+    masked = np.zeros(img.shape)
+
+    # create a cluster mask
+    for i, leaf in enumerate(tree_leaves):
+        mask = np.zeros(img.shape)
+        for idx in leaf:
+            if idx != 0:
+                mask = mask + (fun_atlas == idx)
+
+        masked[mask == 1] = i + 1
+
+    new_img = nib.Nifti1Image(masked, img.affine, img.header)
+    nib.save(new_img, path)
+

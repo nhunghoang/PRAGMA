@@ -149,6 +149,7 @@ def functional_conn(conn_norm, tree_leaves):
 
     return data
 
+
 def sax(conn_norm, indices, time_point):
 
     cluster_summed = np.zeros_like(conn_norm[0])
@@ -165,10 +166,6 @@ def sax(conn_norm, indices, time_point):
 
     # SAX
     transformer = SymbolicAggregateApproximation(n_bins=8, strategy='uniform')
-    # https://pyts.readthedocs.io/en/stable/modules/approximation.html
-    # strategy='uniform': all bins in each sample have identical widths,
-    # strategy='quantile': all bins in each sample have the same number of points,
-    # strategy='normal': bin edges are quantiles from a standard normal distribution.
 
     # MAKE ONE TIME
     # make a letter dict
@@ -187,7 +184,6 @@ def sax(conn_norm, indices, time_point):
     for i in range(conn_norm_ds.shape[0]):  # ROI x time-point
         tmp_sax = transformer.transform(conn_norm_ds[i, :].reshape(1, -1))
         for j in range(tmp_sax.shape[1]):
-            # data['{}_{}'.format(j,letter_dict[0,j])]['value'] = data['{}_{}'.format(j,letter_dict[0,j])]['value'] +1
             data['{}_{}'.format(j, letter_dict[tmp_sax[0, j]])]['value'] += 1
 
     data = list(data.values())

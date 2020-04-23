@@ -4,9 +4,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from utils import *
-import hdf5storage
-import numpy as np
-import nibabel as nib
+import uuid
 
 # create Flask app
 app = Flask(__name__)
@@ -39,7 +37,6 @@ def get_signals():
         k = client_data['k']
         X_indices = client_data['X_indices']
         tree_leaves = client_data['tree_leaves']
-        print(tree_leaves)
         parent_id = client_data['parent_id']
         new_clusters = apply_clustering(alg, reduced_ts, X_indices, k, parent_id)
         new_tree_leaves = insert_cluster(tree_leaves, new_clusters)
@@ -66,9 +63,10 @@ def get_signals():
     elif op == 'tree2nii':
         '''Save the output image as nifti.'''
         tree_leaves = client_data['tree_leaves']
-        path = os.getcwd() + '/../out_data/'
-        atlas = fatlas
-        tree2nii(atlas, path, tree_leaves)
+        # unique_filename = str(uuid.uuid4())
+        # path = os.getcwd() + '/../out_data/' + unique_filename + '.nii'
+        # atlas = fatlas
+        # tree2nii(atlas, path, tree_leaves)
         message = 'The output data is saved as .nii'
         return message
 

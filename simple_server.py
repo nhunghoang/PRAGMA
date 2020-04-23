@@ -63,10 +63,10 @@ def get_signals():
     elif op == 'tree2nii':
         '''Save the output image as nifti.'''
         tree_leaves = client_data['tree_leaves']
-        # unique_filename = str(uuid.uuid4())
-        # path = os.getcwd() + '/../out_data/' + unique_filename + '.nii'
-        # atlas = fatlas
-        # tree2nii(atlas, path, tree_leaves)
+        unique_filename = str(uuid.uuid4())
+        path = os.getcwd() + '/../out_data/' + unique_filename + '.nii'
+        atlas = fatlas
+        tree2nii(atlas, path, tree_leaves)
         message = 'The output data is saved as .nii'
         return message
 

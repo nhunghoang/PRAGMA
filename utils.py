@@ -258,6 +258,7 @@ def homogeneity(conn_norm, indices, fam_leaves):
 
     return data
 
+
 def tree2nii(atlas, path, tree_leaves):
     img = nib.load(atlas)
     fun_atlas = img.get_fdata()

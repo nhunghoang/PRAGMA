@@ -5,6 +5,7 @@ from PIL import Image
 import nibabel as nib
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 import json
+import base64
 
 def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     fig, axs = plt.subplots(1,3,figsize=(20, 4))
@@ -66,7 +67,19 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     plt.figure()
     plt.imshow(X)
     plt.show()
-    return json.dumps(X.tolist())  # jsonify
+
+    # convert it onto string
+    json.dumps(X.tolist())  # jsonify
+
+    # numpy to byte array, byte array to numpy
+    # t = np.arange(25, dtype=np.float64)
+    s = base64.b64encode(X)
+    # r = base64.decodebytes(s)
+    # q = np.frombuffer(r, dtype=np.float64)
+    #
+    # print(np.allclose(q, t))  # np.allclose() compare within a tolerance
+
+    return s
 
 
 fatlas = '../data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas

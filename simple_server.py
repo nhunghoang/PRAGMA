@@ -63,13 +63,14 @@ def get_signals():
         all_data = {'sax': sax_data, 'struct': struct_data, 'homogeneity': homogeneity_data}
         data_obj = all_data
 
-    elif op == 'nii':
+    elif op == 'tree2nii':
         '''Save the output image as nifti.'''
         tree_leaves = client_data['tree_leaves']
         path = os.getcwd() + '/../out_data/'
         atlas = fatlas
         tree2nii(atlas, path, tree_leaves)
-        print('Saved.')
+        message = 'The output data is saved as .nii'
+        return message
 
 
     # this is returned to the client 

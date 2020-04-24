@@ -4,9 +4,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from utils import *
-import hdf5storage
-import numpy as np
-import nibabel as nib
+import uuid
 
 # create Flask app
 app = Flask(__name__)
@@ -23,7 +21,8 @@ mat_filename = os.getcwd() + '/../data/processed_yeo_id108828.mat'  # Rubinov co
 fatlas = os.getcwd() + '/../data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas
 satlas = os.getcwd() + '/../data/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'  # SLANT atlas
 filename = os.getcwd() + '/../data/braincolor.csv'  # SLANT labels
-conn_norm, fun_atlas, struct_atlas, id_to_name = prep_data(mat_filename, fatlas, satlas, filename)
+mni_template = os.getcwd() + '/../data/mni_masked.nii.gz'
+conn_norm, fun_atlas, struct_atlas, id_to_name, template = prep_data(mat_filename, fatlas, satlas, filename, mni_template)
 
 ##############################
 
@@ -40,8 +39,10 @@ def get_signals():
         X_indices = client_data['X_indices']
         tree_leaves = client_data['tree_leaves']
         parent_id = client_data['parent_id']
+        # slice = client_data['slice']
         new_clusters = apply_clustering(alg, reduced_ts, X_indices, k, parent_id)
         new_tree_leaves = insert_cluster(tree_leaves, new_clusters)
+        tri_planar_plot(fun_atlas, template, 44, 37, 45, cmap='tab10')
         func_conn = functional_conn(conn_norm, new_tree_leaves)
         all_data = {'new_clusters': new_clusters, 'func_conn': func_conn}
         data_obj = all_data
@@ -49,6 +50,7 @@ def get_signals():
     elif op == 'fc':
         '''Calculate the functional connectivity matrix after merge and collapse.'''
         tree_leaves = client_data['tree_leaves']
+        tri_planar_plot(fun_atlas, template, 44, 37, 45, cmap='tab10')
         func_conn = functional_conn(conn_norm, tree_leaves)
         data_obj = func_conn
 
@@ -61,6 +63,17 @@ def get_signals():
         homogeneity_data = homogeneity(conn_norm, X_indices, fam_leaves)
         all_data = {'sax': sax_data, 'struct': struct_data, 'homogeneity': homogeneity_data}
         data_obj = all_data
+
+    elif op == 'tree2nii':
+        '''Save the output image as nifti.'''
+        tree_leaves = client_data['tree_leaves']
+        unique_filename = str(uuid.uuid4())
+        path = os.getcwd() + '/../out_data/' + unique_filename + '.nii'
+        atlas = fatlas
+        tree2nii(atlas, path, tree_leaves)
+        message = 'The output data is saved as .nii'
+        data_obj = message
+
 
     # this is returned to the client 
     # note, it will take data_obj, and convert it to a Javascript object

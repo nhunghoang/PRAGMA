@@ -9,7 +9,7 @@ import json
 import hdf5storage
 import scipy.signal as ss
 
-indices = [190]
+indices = [190, 147, 88, 399, 1, 2, 3, 17]
 
 # # LOAD THE CONN MATRIX AND
 # # connectivity matrices all
@@ -70,8 +70,15 @@ for u in unique_labels:
         partial = np.sum(masked == u)
         if partial != 0:
             percent = partial*100/total
-        if 80 >= percent >= 7:
+        if 80 >= percent >= 4:
             data.append({'unique_id': u, 'unique_name': id_to_name[u], 'percentage': np.round(percent, 2)})
+
+        # remove this later
+        sorted_data = sorted(data, key=lambda i: i['percentage'], reverse=True)
+        if len(sorted_data)  > 3:
+            sorted_data[0:3]
+        else:
+            sorted_data
 
 pass
 

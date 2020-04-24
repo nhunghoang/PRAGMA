@@ -11,6 +11,8 @@ import scipy.signal as ss
 import scipy.stats as stat
 from pyts.approximation import SymbolicAggregateApproximation
 import nibabel as nib
+from PIL import Image
+from matplotlib.colors import ListedColormap
 
 '''
 returns numpy array of (PCA'd) timeseries data
@@ -50,7 +52,7 @@ def init_tree_data(n_leaves, in_file, out_file):
     with open(out_file, 'w') as f:
         json.dump(root, f)
 
-def prep_data(mat_fname, f_atlas, satlas, filename):
+def prep_data(mat_fname, f_atlas, satlas, filename, mni_template):
     # full functional conn data
     mat = hdf5storage.loadmat(mat_fname)
     conn = mat['Vp_clean'][0, 0]  # default is the 400 parcellation
@@ -66,6 +68,10 @@ def prep_data(mat_fname, f_atlas, satlas, filename):
     str_atlas = nib.load(satlas)
     struct_atlas = str_atlas.get_fdata()
 
+    # load template
+    mni = nib.load(mni_template)
+    template = mni.get_fdata()
+
     # id to name
     id_to_name = {}
     with open(filename, 'r') as f:
@@ -73,7 +79,7 @@ def prep_data(mat_fname, f_atlas, satlas, filename):
             label, name = line.strip().split(',')
             id_to_name[int(label)] = name
 
-    return conn_norm, fun_atlas, struct_atlas, id_to_name
+    return conn_norm, fun_atlas, struct_atlas, id_to_name, template
 
 
 
@@ -115,7 +121,7 @@ def insert_cluster(tree_leaves, new_clusters):
     return new_tree_leaves
 
 
-def functional_conn(conn_norm, tree_leaves):
+def functional_conn(conn_norm, tree_leaves, tree_ids):
     th = 0.7
     # average cluster members to get ROIs
     rois = []
@@ -143,9 +149,9 @@ def functional_conn(conn_norm, tree_leaves):
 
     # add a unique id for mapping
     data = []
-    unique_id = ["%02d" % x for x in range(l)]
+    # unique_id = ["%02d" % x for x in range(l)]
     for i, p in enumerate(pearson_matrix):
-        data.append({'id': '{}'.format(unique_id[i]), 'value': list(p)})
+        data.append({'id': '{}'.format(tree_ids[i]), 'value': list(p)})
 
     return data
 
@@ -214,7 +220,7 @@ def structural_mapping(fun_atlas, struct_atlas, id_to_name, indices):
             partial = np.sum(masked == u)
             if partial != 0:
                 percent = partial * 100 / total
-            if 80 >= percent >= 7:
+            if 80 >= percent >= 70:
                 data.append({'unique_id': u, 'unique_name': id_to_name[u], 'percentage': np.round(percent, 2)})
     return data
 
@@ -271,4 +277,65 @@ def tree2nii(atlas, path, tree_leaves):
 
     new_img = nib.Nifti1Image(masked, img.affine, img.header)
     nib.save(new_img, path)
+
+
+def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
+    fig, axs = plt.subplots(1,3,figsize=(20, 4))
+
+    parc_mask = parc > 0
+    parc_mask = parc_mask.astype(np.float) * 0.85
+
+    gray = plt.get_cmap('gray')
+    colors = gray(range(256))
+    for i in range(60):
+        colors[i,:] = [53/256, 54/256, 58/256, 1.0]
+    gray = ListedColormap(colors)
+
+    text_color = 'white'
+    bar_color = '#effd5f'
+    axs[0].imshow(np.rot90(template[x,:,:]), cmap=gray)
+    axs[0].imshow(np.rot90(parc[x, :, :]), cmap=cmap, alpha=np.rot90(parc_mask[x, :, :]))
+    axs[0].set_xticks([])
+    axs[0].set_yticks([])
+    axs[0].plot(range(109), [z]*109, color=bar_color)
+    axs[0].plot([y] * 91, range(91), color=bar_color)
+    axs[0].text(2, 87, 'x={}'.format(x), fontsize=12, color=text_color)
+
+    axs[1].imshow(np.rot90(template[:, y, :]), cmap=gray)
+    axs[1].imshow(np.rot90(parc[:, y, :]), cmap=cmap, alpha=np.rot90(parc_mask[:, y, :]))
+    axs[1].set_xticks([])
+    axs[1].set_yticks([])
+    axs[1].plot(range(91), [z]*91, color=bar_color)
+    axs[1].plot([x] * 91, range(91), color=bar_color)
+    axs[1].text(15, 17, 'L', fontsize=12, color=text_color)
+    axs[1].text(70, 17, 'R', fontsize=12, color=text_color)
+    axs[1].text(2, 87, 'y={}'.format(y), fontsize=12, color=text_color)
+
+    axs[2].imshow(np.rot90(template[:, :, z]), aspect='equal', cmap=gray)
+    axs[2].imshow(np.rot90(parc[:, :, z]), aspect='equal', cmap=cmap, alpha=np.rot90(parc_mask[:, :, z]))
+    axs[2].set_xticks([])
+    axs[2].set_yticks([])
+    axs[2].plot(range(91), [y]*91, color=bar_color)
+    axs[2].plot([x] * 109, range(109), color=bar_color)
+    axs[2].text(15, 17, 'L', fontsize=12, color=text_color)
+    axs[2].text(70, 17, 'R', fontsize=12, color=text_color)
+    axs[2].text(2, 105, 'z={}'.format(z), fontsize=12, color=text_color)
+    plt.subplots_adjust(wspace=None, hspace=None)
+
+    fig.canvas.draw()
+    X = np.array(fig.canvas.renderer.buffer_rgba())
+    # X = X[60:445,188:1350]
+
+    delme1 = np.array([[255,255,255,255]]*X.shape[0])
+    for col in range(X.shape[1]-1, -1, -1):
+        if np.array_equal(X[:,col,:], delme1):
+            X = np.concatenate((X[:,0:col,:], X[:, col+1:,:]), axis=1)
+
+    delme1 = np.array([[255,255,255,255]]*X.shape[1])
+    for row in range(X.shape[0]-1, -1, -1):
+        if np.array_equal(X[row,:,:], delme1):
+            X = np.concatenate((X[0:row,:,:], X[row+1:,:,:]), axis=0)
+
+    im = Image.fromarray(X)
+    im.save("../atlas_data/current_slice.png")
 

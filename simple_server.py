@@ -21,7 +21,8 @@ mat_filename = os.getcwd() + '/../data/processed_yeo_id108828.mat'  # Rubinov co
 fatlas = os.getcwd() + '/../data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas
 satlas = os.getcwd() + '/../data/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'  # SLANT atlas
 filename = os.getcwd() + '/../data/braincolor.csv'  # SLANT labels
-conn_norm, fun_atlas, struct_atlas, id_to_name = prep_data(mat_filename, fatlas, satlas, filename)
+mni_template = os.getcwd() + '/../data/mni_masked.nii.gz'
+conn_norm, fun_atlas, struct_atlas, id_to_name, template = prep_data(mat_filename, fatlas, satlas, filename, mni_template)
 
 ##############################
 
@@ -37,17 +38,22 @@ def get_signals():
         k = client_data['k']
         X_indices = client_data['X_indices']
         tree_leaves = client_data['tree_leaves']
+        tree_leaf_ids = client_data['tree_leaf_ids']
         parent_id = client_data['parent_id']
+        # slice = client_data['slice']
         new_clusters = apply_clustering(alg, reduced_ts, X_indices, k, parent_id)
         new_tree_leaves = insert_cluster(tree_leaves, new_clusters)
-        func_conn = functional_conn(conn_norm, new_tree_leaves)
+        tri_planar_plot(fun_atlas, template, 44, 37, 45, cmap='tab10')
+        func_conn = functional_conn(conn_norm, new_tree_leaves, tree_leaf_ids)
         all_data = {'new_clusters': new_clusters, 'func_conn': func_conn}
         data_obj = all_data
 
     elif op == 'fc':
         '''Calculate the functional connectivity matrix after merge and collapse.'''
         tree_leaves = client_data['tree_leaves']
-        func_conn = functional_conn(conn_norm, tree_leaves)
+        tree_leaf_ids = client_data['tree_leaf_ids']
+        tri_planar_plot(fun_atlas, template, 44, 37, 45, cmap='tab10')
+        func_conn = functional_conn(conn_norm, tree_leaves, tree_leaf_ids)
         data_obj = func_conn
 
     elif op == 'detail_panel':
@@ -68,7 +74,7 @@ def get_signals():
         atlas = fatlas
         tree2nii(atlas, path, tree_leaves)
         message = 'The output data is saved as .nii'
-        return message
+        data_obj = message
 
 
     # this is returned to the client 

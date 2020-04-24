@@ -70,7 +70,7 @@ for u in unique_labels:
         partial = np.sum(masked == u)
         if partial != 0:
             percent = partial*100/total
-        if 80 >= percent >= 7:
+        if 80 >= percent >= 60:
             data.append({'unique_id': u, 'unique_name': id_to_name[u], 'percentage': np.round(percent, 2)})
 
 pass

@@ -121,7 +121,7 @@ def insert_cluster(tree_leaves, new_clusters):
     return new_tree_leaves
 
 
-def functional_conn(conn_norm, tree_leaves, tree_ids):
+def functional_conn(conn_norm, tree_leaves):
     th = 0.7
     # average cluster members to get ROIs
     rois = []
@@ -149,9 +149,9 @@ def functional_conn(conn_norm, tree_leaves, tree_ids):
 
     # add a unique id for mapping
     data = []
-    # unique_id = ["%02d" % x for x in range(l)]
+    unique_id = ["%02d" % x for x in range(l)]
     for i, p in enumerate(pearson_matrix):
-        data.append({'id': '{}'.format(tree_ids[i]), 'value': list(p)})
+        data.append({'id': '{}'.format(unique_id[i]), 'value': list(p)})
 
     return data
 
@@ -220,9 +220,15 @@ def structural_mapping(fun_atlas, struct_atlas, id_to_name, indices):
             partial = np.sum(masked == u)
             if partial != 0:
                 percent = partial * 100 / total
-            if 80 >= percent >= 70:
+            if 80 >= percent >= 7:
                 data.append({'unique_id': u, 'unique_name': id_to_name[u], 'percentage': np.round(percent, 2)})
-    return data
+
+    # remove this later
+    sorted_data = sorted(data, key=lambda i: i['percentage'], reverse=True)
+    if len(sorted_data) > 3:
+        return sorted_data[0:4]
+    else:
+        return sorted_data
 
 
 def homogeneity(conn_norm, indices, fam_leaves):

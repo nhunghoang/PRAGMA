@@ -13,15 +13,15 @@ CORS(app)
 ############ DATA ############
 
 # PCA-reduced timeseries data (400 regions x 171 PCs)
-reduced_ts = load_reduced_data(os.getcwd() + '/../data/reduced_SID173839.txt')
+reduced_ts = load_reduced_data(os.getcwd() + '/../in_data/reduced_SID173839.txt')
 
 # functional conn data
-mat_filename = os.getcwd() + '/../data/processed_yeo_id108828.mat'  # Rubinov conn
+mat_filename = os.getcwd() + '/../in_data/processed_yeo_id108828.mat'  # Rubinov conn
 # structural mapping data
-fatlas = os.getcwd() + '/../data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas
-satlas = os.getcwd() + '/../data/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'  # SLANT atlas
-filename = os.getcwd() + '/../data/braincolor.csv'  # SLANT labels
-mni_template = os.getcwd() + '/../data/mni_masked.nii.gz'
+fatlas = os.getcwd() + '/../in_data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas
+satlas = os.getcwd() + '/../in_data/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'  # SLANT atlas
+filename = os.getcwd() + '/../in_data/braincolor.csv'  # SLANT labels
+mni_template = os.getcwd() + '/../in_data/mni_masked.nii.gz'
 conn_norm, fun_atlas, struct_atlas, id_to_name, template = prep_data(mat_filename, fatlas, satlas, filename, mni_template)
 
 ##############################
@@ -39,10 +39,9 @@ def get_signals():
         X_indices = client_data['X_indices']
         tree_leaves = client_data['tree_leaves']
         parent_id = client_data['parent_id']
-        # slice = client_data['slice']
         new_clusters = apply_clustering(alg, reduced_ts, X_indices, k, parent_id)
         new_tree_leaves = insert_cluster(tree_leaves, new_clusters)
-        tri_planar_plot(fun_atlas, template, 44, 37, 45, cmap='tab10')
+        #tri_planar_plot(fun_atlas, template, 44, 37, 45, cmap='tab10')
         func_conn = functional_conn(conn_norm, new_tree_leaves)
         all_data = {'new_clusters': new_clusters, 'func_conn': func_conn}
         data_obj = all_data
@@ -50,7 +49,7 @@ def get_signals():
     elif op == 'fc':
         '''Calculate the functional connectivity matrix after merge and collapse.'''
         tree_leaves = client_data['tree_leaves']
-        tri_planar_plot(fun_atlas, template, 44, 37, 45, cmap='tab10')
+        #tri_planar_plot(fun_atlas, template, 44, 37, 45, cmap='tab10')
         func_conn = functional_conn(conn_norm, tree_leaves)
         data_obj = func_conn
 
@@ -68,12 +67,12 @@ def get_signals():
         '''Save the output image as nifti.'''
         tree_leaves = client_data['tree_leaves']
         unique_filename = str(uuid.uuid4())
+        if not os.path.exists('../out_data'): os.mkdir('../out_data')
         path = os.getcwd() + '/../out_data/' + unique_filename + '.nii'
         atlas = fatlas
         tree2nii(atlas, path, tree_leaves)
-        message = 'The output data is saved as .nii'
+        message = 'The current atlas was saved in out_data/' 
         data_obj = message
-
 
     # this is returned to the client 
     # note, it will take data_obj, and convert it to a Javascript object

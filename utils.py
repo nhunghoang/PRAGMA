@@ -13,6 +13,7 @@ from pyts.approximation import SymbolicAggregateApproximation
 import nibabel as nib
 from PIL import Image
 from matplotlib.colors import ListedColormap
+import imageio
 
 '''
 returns numpy array of (PCA'd) timeseries data
@@ -80,8 +81,6 @@ def prep_data(mat_fname, f_atlas, satlas, filename, mni_template):
             id_to_name[int(label)] = name
 
     return conn_norm, fun_atlas, struct_atlas, id_to_name, template
-
-
 
 
 '''
@@ -328,9 +327,13 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     axs[2].text(2, 105, 'z={}'.format(z), fontsize=12, color=text_color)
     plt.subplots_adjust(wspace=None, hspace=None)
 
-    fig.canvas.draw()
-    X = np.array(fig.canvas.renderer.buffer_rgba())
+    # fig.canvas.draw()
+    # X = np.array(fig.canvas.renderer.buffer_rgba())
     # X = X[60:445,188:1350]
+
+    plt.savefig('tmp.png')
+    plt.close('all')
+    X = imageio.imread('tmp.png')
 
     delme1 = np.array([[255,255,255,255]]*X.shape[0])
     for col in range(X.shape[1]-1, -1, -1):

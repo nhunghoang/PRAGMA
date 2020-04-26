@@ -4,6 +4,7 @@ from nilearn import plotting
 from PIL import Image
 import nibabel as nib
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
+import imageio
 # import json
 # import base64
 
@@ -50,9 +51,12 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     axs[2].text(2, 105, 'z={}'.format(z), fontsize=12, color=text_color)
     plt.subplots_adjust(wspace=None, hspace=None)
 
-    fig.canvas.draw()
-    X = np.array(fig.canvas.renderer.buffer_rgba())
+    # fig.canvas.draw()
+    # X = np.array(fig.canvas.renderer.buffer_rgba())
     # X = X[60:445,188:1350]
+    plt.savefig('tmp.png')
+    plt.close('all')
+    X = imageio.imread('tmp.png')
 
     delme1 = np.array([[255,255,255,255]]*X.shape[0])
     for col in range(X.shape[1]-1, -1, -1):
@@ -67,9 +71,9 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     im = Image.fromarray(X)
     im.save("../atlas_data/current_slice.png")
 
-    # plt.figure()
-    # plt.imshow(X)
-    # plt.show()
+    plt.figure()
+    plt.imshow(X)
+    plt.show()
 
 
     # convert it onto string

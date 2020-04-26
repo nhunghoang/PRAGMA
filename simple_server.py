@@ -67,8 +67,10 @@ def get_signals():
         '''Save the output image as nifti.'''
         tree_leaves = client_data['tree_leaves']
         unique_filename = str(uuid.uuid4())
+
         if not os.path.exists('../out_data'): os.mkdir('../out_data')
         path = os.getcwd() + '/../out_data/' + unique_filename + '.nii'
+        
         atlas = fatlas
         tree2nii(atlas, path, tree_leaves)
         message = 'The current atlas was saved in out_data/' 

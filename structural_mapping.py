@@ -75,7 +75,7 @@ for u in unique_labels:
 
         # remove this later
         sorted_data = sorted(data, key=lambda i: i['percentage'], reverse=True)
-        if len(sorted_data)  > 3:
+        if len(sorted_data) > 3:
             sorted_data[0:3]
         else:
             sorted_data

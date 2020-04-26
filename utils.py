@@ -86,8 +86,6 @@ def prep_data(mat_fname, f_atlas, satlas, filename, mni_template):
     return conn_norm, fun_atlas, struct_atlas, id_to_name, template
 
 
-
-
 '''
 return a children dictionary
 children['children'] = list of {'regions': regions}, which each represents a new child
@@ -334,6 +332,10 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
 
     fig.canvas.draw()
     X = np.array(fig.canvas.renderer.buffer_rgba())
+
+    plt.savefig('tmp.png')
+    plt.close('all')
+    X = imageio.imread('tmp.png')
 
     delme1 = np.array([[255,255,255,255]]*X.shape[0])
     for col in range(X.shape[1]-1, -1, -1):

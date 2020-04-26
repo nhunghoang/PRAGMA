@@ -2,6 +2,8 @@
 Clustering functions for the timeseries data. 
 """
 
+import matplotlib
+matplotlib.use('Agg')
 import numpy as np 
 from sklearn.cluster import KMeans, AgglomerativeClustering
 import json
@@ -14,6 +16,7 @@ import nibabel as nib
 from PIL import Image
 from matplotlib.colors import ListedColormap
 import imageio
+import os
 
 '''
 returns numpy array of (PCA'd) timeseries data
@@ -327,9 +330,8 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     axs[2].text(2, 105, 'z={}'.format(z), fontsize=12, color=text_color)
     plt.subplots_adjust(wspace=None, hspace=None)
 
-    # fig.canvas.draw()
-    # X = np.array(fig.canvas.renderer.buffer_rgba())
-    # X = X[60:445,188:1350]
+    fig.canvas.draw()
+    X = np.array(fig.canvas.renderer.buffer_rgba())
 
     plt.savefig('tmp.png')
     plt.close('all')
@@ -346,5 +348,6 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
             X = np.concatenate((X[0:row,:,:], X[row+1:,:,:]), axis=0)
 
     im = Image.fromarray(X)
+    if not os.path.exists('../atlas_data'): os.mkdir('../atlas_data')
     im.save("../atlas_data/current_slice.png")
 

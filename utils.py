@@ -185,7 +185,7 @@ def sax(conn_norm, indices, time_point):
     data = {}
     # initialize the sax dictionary solution
     for letter in letter_dict:
-        for i in range(20):
+        for i in range(70):
             data['{}_{}'.format(i, letter_dict[letter])] = ({'time': '{}'.format(i), 'letter': str(letter_dict[letter]),
                                                              'value': 0})
     # apply SAX

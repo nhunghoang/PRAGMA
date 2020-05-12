@@ -119,7 +119,6 @@ def insert_cluster(tree_leaves, new_clusters):
     new_tree_leaves.remove(sorted(one))
     for n in new_clusters:
         new_tree_leaves.append(list(n['regions']))
-
     return new_tree_leaves
 
 
@@ -222,7 +221,7 @@ def structural_mapping(fun_atlas, struct_atlas, id_to_name, indices):
             partial = np.sum(masked == u)
             if partial != 0:
                 percent = partial * 100 / total
-            if 80 >= percent >= 7:
+            if 90 >= percent >= 7:
                 data.append({'unique_id': u, 'unique_name': id_to_name[u], 'percentage': np.round(percent, 2)})
 
     # remove this later
@@ -288,7 +287,9 @@ def tree2nii(atlas, path, tree_leaves):
 
 
 def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
-    fig, axs = plt.subplots(1,3,figsize=(20, 4))
+    print(parc)
+    print(template)
+    fig, axs = plt.subplots(3,1,figsize=(4, 20))
 
     parc_mask = parc > 0
     parc_mask = parc_mask.astype(np.float) * 0.85
@@ -296,16 +297,16 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     gray = plt.get_cmap('gray')
     colors = gray(range(256))
     for i in range(60):
-        colors[i,:] = [53/256, 54/256, 58/256, 1.0]
+        colors[i, :] = [53 / 256, 54 / 256, 58 / 256, 1.0]
     gray = ListedColormap(colors)
 
     text_color = 'white'
     bar_color = '#effd5f'
-    axs[0].imshow(np.rot90(template[x,:,:]), cmap=gray)
+    axs[0].imshow(np.rot90(template[x, :, :]), cmap=gray)
     axs[0].imshow(np.rot90(parc[x, :, :]), cmap=cmap, alpha=np.rot90(parc_mask[x, :, :]))
     axs[0].set_xticks([])
     axs[0].set_yticks([])
-    axs[0].plot(range(109), [z]*109, color=bar_color)
+    axs[0].plot(range(109), [z] * 109, color=bar_color)
     axs[0].plot([y] * 91, range(91), color=bar_color)
     axs[0].text(2, 87, 'x={}'.format(x), fontsize=12, color=text_color)
 
@@ -313,7 +314,7 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     axs[1].imshow(np.rot90(parc[:, y, :]), cmap=cmap, alpha=np.rot90(parc_mask[:, y, :]))
     axs[1].set_xticks([])
     axs[1].set_yticks([])
-    axs[1].plot(range(91), [z]*91, color=bar_color)
+    axs[1].plot(range(91), [z] * 91, color=bar_color)
     axs[1].plot([x] * 91, range(91), color=bar_color)
     axs[1].text(15, 17, 'L', fontsize=12, color=text_color)
     axs[1].text(70, 17, 'R', fontsize=12, color=text_color)
@@ -323,7 +324,7 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     axs[2].imshow(np.rot90(parc[:, :, z]), aspect='equal', cmap=cmap, alpha=np.rot90(parc_mask[:, :, z]))
     axs[2].set_xticks([])
     axs[2].set_yticks([])
-    axs[2].plot(range(91), [y]*91, color=bar_color)
+    axs[2].plot(range(91), [template.shape[1]-y]*91, color=bar_color)
     axs[2].plot([x] * 109, range(109), color=bar_color)
     axs[2].text(15, 17, 'L', fontsize=12, color=text_color)
     axs[2].text(70, 17, 'R', fontsize=12, color=text_color)
@@ -337,17 +338,16 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     plt.close('all')
     X = imageio.imread('tmp.png')
 
-    delme1 = np.array([[255,255,255,255]]*X.shape[0])
-    for col in range(X.shape[1]-1, -1, -1):
-        if np.array_equal(X[:,col,:], delme1):
-            X = np.concatenate((X[:,0:col,:], X[:, col+1:,:]), axis=1)
+    delme1 = np.array([[255, 255, 255, 255]] * X.shape[0])
+    for col in range(X.shape[1] - 1, -1, -1):
+        if np.array_equal(X[:, col, :], delme1):
+            X = np.concatenate((X[:, 0:col, :], X[:, col + 1:, :]), axis=1)
 
-    delme1 = np.array([[255,255,255,255]]*X.shape[1])
-    for row in range(X.shape[0]-1, -1, -1):
-        if np.array_equal(X[row,:,:], delme1):
-            X = np.concatenate((X[0:row,:,:], X[row+1:,:,:]), axis=0)
+    delme1 = np.array([[255, 255, 255, 255]] * X.shape[1])
+    for row in range(X.shape[0] - 1, -1, -1):
+        if np.array_equal(X[row, :, :], delme1):
+            X = np.concatenate((X[0:row, :, :], X[row + 1:, :, :]), axis=0)
 
     im = Image.fromarray(X)
-    if not os.path.exists('../atlas_data'): os.mkdir('../atlas_data')
     im.save("../atlas_data/current_slice.png")
 

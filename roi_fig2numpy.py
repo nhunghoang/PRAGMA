@@ -9,7 +9,7 @@ import imageio
 # import base64
 
 def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
-    fig, axs = plt.subplots(1,3,figsize=(20, 4))
+    fig, axs = plt.subplots(3,1,figsize=(4, 20))
 
     parc_mask = parc > 0
     parc_mask = parc_mask.astype(np.float) * 0.85
@@ -19,6 +19,7 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     for i in range(60):
         colors[i,:] = [53/256, 54/256, 58/256, 1.0]
     gray = ListedColormap(colors)
+
 
     text_color = 'white'
     bar_color = '#effd5f'
@@ -44,7 +45,7 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     axs[2].imshow(np.rot90(parc[:, :, z]), aspect='equal', cmap=cmap, alpha=np.rot90(parc_mask[:, :, z]))
     axs[2].set_xticks([])
     axs[2].set_yticks([])
-    axs[2].plot(range(91), [y]*91, color=bar_color)
+    axs[2].plot(range(91), [template.shape[1]-y]*91, color=bar_color)
     axs[2].plot([x] * 109, range(109), color=bar_color)
     axs[2].text(15, 17, 'L', fontsize=12, color=text_color)
     axs[2].text(70, 17, 'R', fontsize=12, color=text_color)
@@ -54,9 +55,9 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     fig.canvas.draw()
     X = np.array(fig.canvas.renderer.buffer_rgba())
     # X = X[60:445,188:1350]
-    # plt.savefig('tmp.png')
-    # plt.close('all')
-    # X = imageio.imread('tmp.png')
+    plt.savefig('tmp.png')
+    plt.close('all')
+    X = imageio.imread('tmp.png')
 
     delme1 = np.array([[255,255,255,255]]*X.shape[0])
     for col in range(X.shape[1]-1, -1, -1):
@@ -90,8 +91,8 @@ def tri_planar_plot(parc, template, x, y, z, cmap='tab10'):
     # return s
 
 
-fatlas = '../data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas
-mni_path = '/home/bayrakrg//neurdy/d3/server_data/mni_masked.nii.gz'
+fatlas = '../in_data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'  # Shaefer atlas
+mni_path = '../in_data/mni_masked.nii.gz'
 # fig = plotting.plot_roi(fatlas, cut_coords=(8, -4, 9), black_bg=True, cmap='tab10')
 
 vol = nib.load(fatlas).get_fdata()

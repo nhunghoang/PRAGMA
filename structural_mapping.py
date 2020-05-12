@@ -20,7 +20,7 @@ indices = [190, 147, 88, 399, 1, 2, 3, 17]
 # # normalize the fc conn data
 # conn_norm = np.transpose((np.transpose(conn) - np.mean(conn, axis=1)) / np.std(conn, axis=1))
 
-f_atlas = '../data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'
+f_atlas = '../in_data/Schaefer2018_400Parcels_17Networks_order_FSLMNI152_2mm.nii.gz'
 fu_atlas = nib.load(f_atlas)
 fun_atlas = fu_atlas.get_fdata()
 mask = np.zeros(fu_atlas.shape)
@@ -36,7 +36,7 @@ for idx in indices:
     # plt.show()
 
 # mask structural parcellations
-satlas = '../data/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'
+satlas = '../in_data/mni_icbm152_t1_tal_nlin_asym_09c_seg_ds.nii.gz'
 str_atlas = nib.load(satlas)
 struct_atlas = str_atlas.get_fdata()
 masked = struct_atlas.copy()
@@ -52,7 +52,7 @@ masked[mask == 0] = 0
 unique_labels = np.unique(masked)
 
 # load braincolor csv file
-filename = '../data/braincolor.csv'
+filename = '../in_data/braincolor.csv'
 id_to_name = {}
 with open(filename, 'r') as f:
     for line in f.readlines():

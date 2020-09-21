@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 import http.server
+import os 
+
+# save pid of current python process
+with open('server_pids.txt', 'a') as f: f.write( '{}\n'.format(os.getpid()) )
 
 class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):

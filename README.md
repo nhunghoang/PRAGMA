@@ -20,13 +20,14 @@ The paper can be found [TBA]().
 ## Quick Start
 
 The accompanying Observable notebook can be found [here](https://observablehq.com/d/0a3780675484b524). 
+Before trying PRAGMA, please contact the developers for a demo. 
 
 #### Get our docker image
 ```
 sudo docker pull rgbayrak/pragma
 ```
 
-Authors of this code:
+Developers of this code:
 - Roza G. Bayrak ([email](mailto:roza.g.bayrak@vanderbilt.edu))
 - Nhung Hoang ([email](mailto:nhung.hoang@vanderbilt.edu))
 - Colin B. Hansen ([email](mailto:colin.b.hansen@vanderbilt.edu))

@@ -4,7 +4,7 @@ click==7.1.1
 cycler==0.10.0
 decorator==4.4.2
 Flask==1.1.2
-Flask-Cors==3.0.8
+Flask-Cors==3.0.9
 h5py==2.10.0
 hdf5storage==0.1.15
 idna==2.9

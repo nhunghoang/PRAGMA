@@ -21,7 +21,7 @@ nibabel==3.0.2
 nilearn==0.6.2
 numba==0.49.0
 numpy==1.18.5
-Pillow==7.1.2
+Pillow==9.0.0
 pyparsing==2.4.6
 python-dateutil==2.8.1
 pyts==0.11.0
